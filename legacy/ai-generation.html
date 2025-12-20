@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AI Room Generation - Jai Thindal Tiles</title>
+
+  <link rel="stylesheet" href="ai-generation.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Load Three.js (non-module, works with your current JS) -->
+  <script src="three.min.js"></script>
+
+  <!-- Load OrbitControls (non-module matching three.min.js version) -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/controls/OrbitControls.js"></script>
+
+  <!-- Load your script normally (NOT module!) -->
+  <script src="ai-generation.js" defer></script>
+
+  <style>
+    .dimension-controls {
+      margin-top: 20px;
+      padding: 16px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .dimension-controls h4 {
+      margin: 0 0 16px 0;
+      font-size: 15px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .slider-group {
+      margin-bottom: 16px;
+    }
+
+    .slider-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .slider-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 13px;
+      color: #555;
+      font-weight: 500;
+    }
+
+    .slider-value {
+      color: #3b4251;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .dimension-slider {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: #d1d5db;
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .dimension-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #3b404b;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .dimension-slider::-webkit-slider-thumb:hover {
+      background: #404655;
+      transform: scale(1.1);
+    }
+
+    .dimension-slider::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #4a505e;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s ease;
+    }
+
+    .dimension-slider::-moz-range-thumb:hover {
+      background: #6e717b;
+      transform: scale(1.1);
+    }
+
+    .dimension-slider::-webkit-slider-runnable-track {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: #d1d5db;
+    }
+
+    .dimension-slider::-moz-range-track {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: #d1d5db;
+    }
+
+    .slider-hint {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-top: 4px;
+    }
+  </style>
+
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo-circle">JTT</div>
+      <div class="brand-text">
+        <div class="brand-name">JAI THINDAL TILES</div>
+      </div>
+    </div>
+
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <button class="crumb" onclick="window.location.href='custom.html'">Customer Details</button>
+      <button class="crumb" onclick="window.location.href='home-dashboard.html'">Home</button>
+      <button class="crumb" onclick="window.location.href='tile-visualization-setup.html'">Room Setup</button>
+      <button class="crumb active">AI Generation</button>
+      <button id="crumbTileSelection" class="crumb">Tile Selection</button>
+    </nav>
+  </header>
+
+  <main class="ai-page">
+    <div class="container">
+
+      <h1 class="title">AI-Generated 3D Room Visualization</h1>
+      <p class="subtitle muted">Explore your room in immersive 3D — rotate, zoom and inspect before selecting tiles.</p>
+
+      <div class="content-grid">
+
+        <!-- LEFT: 3D Viewer -->
+        <section class="card large">
+          <div id="viewerWrap" class="viewer-wrap">
+            <canvas id="threeCanvas" class="three-canvas"></canvas>
+
+            <div class="controls-top">
+              <button id="resetView" class="control-btn">Reset View</button>
+              <button id="fullscreenBtn" class="control-btn">Fullscreen</button>
+            </div>
+
+            <div class="info-bottom">
+              <div class="interactive">Interactive Controls
+                <small> • Left click: rotate • Scroll: zoom • Right click: pan</small>
+              </div>
+              <button id="selectTiles" class="btn-primary">Select Tiles ➜</button>
+            </div>
+          </div>
+          
+          <!-- Inline tile picker -->
+          <div id="tilePickerWrap" class="tile-picker hidden">
+            <div class="tile-picker-header">
+              <div>
+                <div class="picker-title">Apply Tiles to This Room</div>
+                <div class="picker-sub">Loaded from admin collections; click a tile to apply instantly.</div>
+              </div>
+              <div class="picker-actions">
+                <button id="pickerFloorBtn" class="picker-btn">Floor Collection</button>
+                <button id="pickerWallBtn" class="picker-btn">Wall Collection</button>
+              </div>
+            </div>
+            <div id="tilePickerGrid" class="tile-picker-grid">
+              <div class="picker-empty">Select a collection to view tiles.</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- RIGHT SIDE PANEL -->
+        <aside class="right-col">
+          <div class="card">
+            <h4>Room Parameters <span id="editLink" class="muted"> (Edit)</span></h4>
+
+            <div class="param"><strong>Room Type</strong><div id="pRoom">—</div></div>
+            <div class="param"><strong>Width</strong><div id="pWidth">— ft</div></div>
+            <div class="param"><strong>Length</strong><div id="pLength">— ft</div></div>
+            <div class="param"><strong>Total Area</strong><div id="pArea">— sq ft</div></div>
+            <div class="param"><strong>Room Model</strong><div id="pModel">—</div></div>
+
+            <!-- Dimension Controls -->
+            <div class="dimension-controls">
+              <h4>Adjust Room Dimensions</h4>
+              
+              <div class="slider-group">
+                <div class="slider-label">
+                  <span>Width</span>
+                  <span id="widthValue" class="slider-value">15 ft</span>
+                </div>
+                <input type="range" id="widthSlider" class="dimension-slider" 
+                       min="5" max="30" value="15" step="1">
+                <div class="slider-hint">Drag to adjust room width (5-30 ft)</div>
+              </div>
+
+              <div class="slider-group">
+                <div class="slider-label">
+                  <span>Length</span>
+                  <span id="lengthValue" class="slider-value">20 ft</span>
+                </div>
+                <input type="range" id="lengthSlider" class="dimension-slider" 
+                       min="5" max="40" value="20" step="1">
+                <div class="slider-hint">Drag to adjust room length (5-40 ft)</div>
+              </div>
+
+              <div class="slider-group">
+                <div class="slider-label">
+                  <span>Height</span>
+                  <span id="heightValue" class="slider-value">9 ft</span>
+                </div>
+                <input type="range" id="heightSlider" class="dimension-slider" 
+                       min="3" max="15" value="9" step="1">
+                <div class="slider-hint">Drag to adjust ceiling height (7-15 ft)</div>
+              </div>
+            </div>
+
+            <div class="note card small muted mt">
+              <strong>3D Visualization Ready</strong>
+              <p class="muted">Rotate, zoom, and explore your room from different angles using mouse controls. Adjust dimensions in real-time.</p>
+            </div>
+          </div>
+
+          <div class="card mt">
+            <h4>Visualization Tips</h4>
+            <ul class="muted">
+              <li>Adjust sliders to modify room dimensions in real-time</li>
+              <li>Rotate the room to view from different angles</li>
+              <li>Check wall surfaces for tile placement areas</li>
+              <li>Zoom in to see edges and room depth</li>
+              <li>Use fullscreen for better visualization</li>
+            </ul>
+          </div>
+
+          <div class="card mt small">
+            <h4>AI-Powered Precision</h4>
+            <div class="precision">
+              <div class="big">300</div>
+              <div class="label muted">Square Feet</div>
+              <div class="spacer"></div>
+              <div class="big">3D</div>
+              <div class="label muted">Visualization</div>
+            </div>
+          </div>
+        </aside>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- LOADING MODAL -->
+  <div id="progressModal" class="progress-modal">
+    <div class="modal-card">
+      <div class="star">✦</div>
+      <h3>Generating Your Room</h3>
+      <p class="muted">AI is creating a realistic 3D visualization</p>
+
+      <div class="progress-wrap">
+        <div class="progress-bar-bg"><div id="progressBar" class="progress-bar"></div></div>
+        <div class="progress-pct" id="progressPct">0%</div>
+      </div>
+
+      <ol class="progress-steps" id="progressSteps">
+        <li class="done">Analyzing room parameters</li>
+        <li class="done">Processing AI model</li>
+        <li class="">Generating 3D structure</li>
+        <li class="">Applying textures and lighting</li>
+        <li class="">Finalizing visualization</li>
+      </ol>
+    </div>
+  </div>
+
+</body>
+</html>

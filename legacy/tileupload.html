@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin - JAI THINDAL TILES</title>
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(135deg, #e9fdf0, #d7f7df);
+        overflow-x: hidden;
+    }
+
+    /* HEADER */
+    .header {
+        text-align: center;
+        padding: 28px 0;
+        background: linear-gradient(45deg, #4ebd6b, #72d88e);
+        color: #fff;
+        font-size: 2.3rem;
+        font-weight: 700;
+        letter-spacing: 2px;
+        border-bottom-left-radius: 40px;
+        border-bottom-right-radius: 40px;
+        box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+    }
+
+    /* MAIN CONTAINER */
+    .container {
+        width: 82%;
+        margin: 30px auto;
+        background: rgba(255,255,255,0.95);
+        padding: 35px;
+        border-radius: 22px;
+        box-shadow: 0 6px 25px rgba(0,0,0,0.15);
+        animation: fadeIn 0.6s ease;
+    }
+
+    /* Animation */
+    @keyframes fadeIn {
+        from {opacity: 0; transform: translateY(20px);}
+        to {opacity:1; transform: translateY(0);}
+    }
+
+    .input-group { margin-bottom: 20px; }
+
+    label {
+        font-size: 1.05rem;
+        font-weight: bold;
+        color: #2f4f36;
+    }
+
+    input, select {
+        width: 100%;
+        padding: 13px;
+        margin-top: 7px;
+        border-radius: 12px;
+        border: 1.5px solid #8fbc9f;
+        background: #f4fcf6;
+        transition: 0.25s;
+    }
+
+    input:focus, select:focus {
+        border-color: #4ebd6b;
+        background: #ffffff;
+        box-shadow: 0 0 8px rgba(0, 150, 80, 0.2);
+    }
+
+    /* UPLOAD BOX */
+    .upload-box {
+        padding: 25px;
+        background: #f2faf3;
+        border: 2px dashed #89c89d;
+        text-align: center;
+        border-radius: 20px;
+        margin-bottom: 25px;
+        color: #2e4d34;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+
+    /* BUTTONS */
+    .tile-buttons, .view-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 40px;
+        margin-top: 30px;
+    }
+
+    .btn {
+        padding: 16px 40px;
+        border: none;
+        border-radius: 50px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+        box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+        color: #fff;
+    }
+
+    .floor-btn {
+        background: linear-gradient(45deg, #54d67b, #7ae8a1);
+    }
+
+    .wall-btn {
+        background: linear-gradient(45deg, #8ce6bd, #b8f7d8);
+        color: #234d2e;
+    }
+
+    .btn:hover {
+        transform: scale(1.05);
+    }
+
+    /* VIEW BUTTONS */
+    .view-btn {
+        padding: 14px 35px;
+        background: linear-gradient(45deg, #b4ffcb, #8bf7ac);
+        border-radius: 40px;
+        color: #215c34;
+        border: none;
+        font-size: 1.1rem;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+
+    .view-btn:hover {
+        transform: scale(1.07);
+        background: linear-gradient(45deg, #9dffc1, #6eea92);
+    }
+
+    /* COLLECTION BOX */
+    .collection {
+        width: 85%;
+        margin: 30px auto;
+        padding: 20px;
+        background: #ffffff;
+        border-radius: 18px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+        display: none;
+        border-left: 6px solid #57c97d;
+    }
+
+    .collection h2 {
+        color: #2d603c;
+        margin-bottom: 20px;
+        font-size: 1.8rem;
+    }
+
+    /* TILE ITEM */
+    .tile-item {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding: 15px;
+        margin-bottom: 15px;
+        background: #f1fbf3;
+        border-radius: 14px;
+        border: 1px solid #d6f3df;
+    }
+
+    .tile-item img {
+        width: 120px;
+        height: 120px;
+        border-radius: 12px;
+        object-fit: cover;
+        border: 2px solid #a4dfb7;
+    }
+
+    .delete-btn {
+        padding: 10px 20px;
+        background: #ff4f4f;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: 0.25s;
+    }
+
+    .delete-btn:hover {
+        background: #e63c3c;
+        transform: scale(1.05);
+    }
+</style>
+</head>
+
+<body>
+
+<div class="header">ADMIN PANEL - JAI THINDAL TILES</div>
+
+<div class="container">
+    <div class="upload-box">
+        <h3>Upload Tile Image</h3>
+        <input type="file" id="tileImage" accept="image/*">
+    </div>
+
+    <div class="input-group">
+        <label>Tile Size</label>
+        <input type="text" id="tileSize" placeholder="Ex: 2x2, 4x4, 6x4">
+    </div>
+
+    <div class="input-group">
+        <label>Design Number</label>
+        <input type="text" id="designNumber">
+    </div>
+
+    <div class="input-group">
+        <label>Tile Amount</label>
+        <input type="number" id="tileAmount">
+    </div>
+
+    <div class="input-group">
+        <label>Tile Type</label>
+        <select id="tileType">
+            <option value="floor">Floor Tile</option>
+            <option value="wall">Wall Tile</option>
+        </select>
+    </div>
+
+    <div class="tile-buttons">
+    <button class="btn wall-btn" onclick="clearForm()">Clear Form</button>
+        <button class="btn floor-btn" onclick="saveTile('floor')">Save to Floor Collection</button>
+        <button class="btn wall-btn" onclick="saveTile('wall')">Save to Wall Collection</button>
+        <button class="view-btn" onclick="toggleSection('floorCollection')">VIEW FLOOR TILE COLLECTION</button>
+        <button class="view-btn" onclick="toggleSection('wallCollection')">VIEW WALL TILE COLLECTION</button>
+    </div>
+
+    <div class="view-buttons">
+
+    </div>
+</div>
+
+<div class="collection" id="floorCollection">
+    <h2>FLOOR TILE COLLECTION</h2>
+    <div id="floorList"></div>
+</div>
+
+<div class="collection" id="wallCollection">
+    <h2>WALL TILE COLLECTION</h2>
+    <div id="wallList"></div>
+</div>
+
+<script>
+function toggleSection(id) {
+    const section = document.getElementById(id);
+    section.style.display = section.style.display === "block" ? "none" : "block";
+}
+
+/* ---------------- SAVE TILE ---------------- */
+function saveTile(type) {
+    const imgFile = document.getElementById("tileImage").files[0];
+    const size = document.getElementById("tileSize").value;
+    const design = document.getElementById("designNumber").value;
+    const amount = document.getElementById("tileAmount").value;
+
+    if (!imgFile || !size || !design || !amount) {
+        alert("Please fill all fields and upload an image!");
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function () {
+        const tileData = {
+            image: reader.result,
+            size,
+            design,
+            amount
+        };
+
+        let collection = JSON.parse(localStorage.getItem(type)) || [];
+        collection.push(tileData);
+        localStorage.setItem(type, JSON.stringify(collection));
+
+        loadTiles();
+        alert("Tile saved successfully!");
+    };
+
+    reader.readAsDataURL(imgFile);
+}
+
+/* ---------------- LOAD TILES ---------------- */
+function loadTiles() {
+    loadTileType("floor", "floorList");
+    loadTileType("wall", "wallList");
+}
+
+function loadTileType(type, listId) {
+    const list = document.getElementById(listId);
+    list.innerHTML = "";
+
+    let tiles = JSON.parse(localStorage.getItem(type)) || [];
+
+    tiles.forEach((tile, index) => {
+        const div = document.createElement("div");
+        div.className = "tile-item";
+
+        div.innerHTML = `
+            <img src="${tile.image}" />
+            <div>
+                <p><b>Size:</b> ${tile.size}</p>
+                <p><b>Design:</b> ${tile.design}</p>
+                <p><b>Amount:</b> ${tile.amount}</p>
+            </div>
+            <button class="delete-btn" onclick="deleteTile('${type}', ${index})">Delete</button>
+        `;
+
+        list.appendChild(div);
+    });
+}
+
+/* ---------------- DELETE TILE ---------------- */
+function deleteTile(type, index) {
+    if (confirm("Are you sure you want to delete this tile?")) {
+        let collection = JSON.parse(localStorage.getItem(type)) || [];
+        collection.splice(index, 1);
+        localStorage.setItem(type, JSON.stringify(collection));
+        loadTiles();
+    }
+}
+function clearForm() {
+    document.getElementById("tileImage").value = "";
+    document.getElementById("tileSize").value = "";
+    document.getElementById("designNumber").value = "";
+    document.getElementById("tileAmount").value = "";
+    document.getElementById("tileType").value = "floor";
+
+    alert("Form cleared!");
+}
+
+
+/* Load tiles on page start */
+window.onload = loadTiles;
+</script>
+
+</body>
+</html>

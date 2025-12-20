@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin Login — Jai Thindal Tiles</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#eef6f0;
+      --card:#ffffff;
+      --muted:#6b7280;
+      --accent-1:#255a3f;
+      --accent-2:#2f6b4b;
+      --accent-3:#7ac08a;
+      --glass:rgba(255,255,255,0.6);
+      --shadow:0 12px 30px rgba(16,24,20,0.08);
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      background: radial-gradient(1200px 400px at 10% 10%, rgba(47,107,75,0.06), transparent),
+                  radial-gradient(900px 300px at 90% 90%, rgba(18,67,39,0.03), transparent),
+                  var(--bg);
+      display:flex;align-items:center;justify-content:center;padding:28px;
+    }
+
+    /* Page container */
+    .wrap{
+      width:100%;max-width:980px;display:grid;grid-template-columns:420px 1fr;gap:28px;align-items:center;
+    }
+
+    /* Left: Brand / Poster */
+    .panel{
+      background: linear-gradient(135deg,var(--accent-2),var(--accent-1));
+      color:white;border-radius:16px;padding:28px;box-shadow:0 18px 50px rgba(15,40,30,0.18);
+      min-height:420px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;
+    }
+
+    .brand{
+      display:flex;align-items:center;gap:14px;
+    }
+    .logo{
+      width:64px;height:64px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
+      display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;backdrop-filter: blur(4px);
+      box-shadow:0 6px 18px rgba(0,0,0,0.12);
+    }
+
+    .brand h1{font-size:20px;letter-spacing:1px;margin-bottom:2px}
+    .brand p{font-size:13px;opacity:0.95;margin-top:2px}
+
+    .panel-hero{
+      margin-top:18px;font-size:14px;line-height:1.6;opacity:0.95;
+    }
+
+    .decor-blob{
+      position:absolute;right:-60px;bottom:-40px;width:260px;height:260px;border-radius:50%;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.08), transparent 40%),
+                  linear-gradient(180deg, rgba(255,255,255,0.03), transparent);
+      transform:rotate(18deg);filter:blur(10px);
+    }
+
+    /* Right: Login card */
+    .card{
+      background:var(--card);padding:28px;border-radius:14px;box-shadow:var(--shadow);border:1px solid rgba(15,23,16,0.04);
+    }
+
+    .card h2{font-size:20px;margin-bottom:6px}
+    .card p.sub{color:var(--muted);font-size:13px;margin-bottom:18px}
+
+    .form-row{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+
+    .field{
+      width:100%;display:flex;align-items:center;background:linear-gradient(180deg, #ffffff, #fbfffb);padding:10px 12px;border-radius:10px;border:1px solid rgba(0,0,0,0.04);
+      transition:box-shadow .18s,transform .12s;
+    }
+    .field:focus-within{box-shadow:0 10px 30px rgba(47,107,75,0.06);transform:translateY(-2px)}
+
+    .field svg{width:18px;height:18px;opacity:0.9;margin-right:10px}
+    .field input{border:0;outline:0;font-size:14px;width:100%;background:transparent}
+
+    .actions{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+    .checkbox{display:flex;gap:8px;align-items:center;color:var(--muted);font-size:13px}
+
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:12px 14px;border-radius:10px;border:0;font-weight:700;cursor:pointer;
+      background:linear-gradient(90deg,var(--accent-2),var(--accent-3));color:white;box-shadow:0 14px 30px rgba(47,107,75,0.18);transition:transform .12s,box-shadow .12s;
+    }
+    .btn:active{transform:translateY(1px)}
+
+    .note{color:var(--muted);font-size:13px;text-align:center;margin-top:14px}
+
+    .footer-links{display:flex;gap:12px;justify-content:center;margin-top:14px}
+    .footer-links a{font-size:13px;color:var(--accent-1);text-decoration:none}
+
+    /* small helper */
+    .muted{color:var(--muted);font-size:13px}
+
+    /* responsive */
+    @media (max-width:880px){
+      .wrap{grid-template-columns:1fr;max-width:460px}
+      .panel{order:2}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- Left brand panel -->
+    <aside class="panel" aria-hidden="false">
+      <div>
+        <div class="brand">
+          <div class="logo">JTT</div>
+          <div>
+            <h1>JAI THINDAL TILES</h1>
+            <p>Premium Tiles &amp; Designs</p>
+          </div>
+        </div>
+
+        <div class="panel-hero">
+          <strong>Beautiful. Durable. Timeless.</strong>
+          <p style="margin-top:10px">Manage inventory, pricing and orders from a single place. Fast, secure access for authorized admins.</p>
+        </div>
+      </div>
+
+      <div style="margin-top:18px;display:flex;gap:12px;align-items:center">
+        <div style="font-size:12px;background:rgba(255,255,255,0.06);padding:8px;border-radius:8px">Safe • Encrypted</div>
+        <div style="font-size:12px;background:rgba(255,255,255,0.06);padding:8px;border-radius:8px">99.9% Uptime</div>
+      </div>
+
+      <div class="decor-blob"></div>
+    </aside>
+
+    <!-- Right login card -->
+    <main class="card" role="main">
+      <h2>Admin Login</h2>
+      <p class="sub">Sign in to access the dashboard</p>
+
+      <div style="margin-bottom:10px">
+        <label class="muted" for="username">Username</label>
+        <div class="field" style="margin-top:6px">
+          <!-- user icon -->
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5z" fill="currentColor"/></svg>
+          <input id="username" type="text" placeholder="Enter username" aria-label="username">
+        </div>
+      </div>
+
+      <div style="margin-bottom:6px">
+        <label class="muted" for="password">Password</label>
+        <div class="field" style="margin-top:6px">
+          <!-- lock icon -->
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17 9h-1V7a4 4 0 0 0-8 0v2H7a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V10a1 1 0 0 0-1-1zM10 9V7a2 2 0 1 1 4 0v2h-4z" fill="currentColor"/></svg>
+          <input id="password" type="password" placeholder="Enter password" aria-label="password">
+        </div>
+      </div>
+
+      <div class="form-row" style="margin-top:6px;">
+        <label class="checkbox"><input id="remember" type="checkbox"> Remember me</label>
+        <a href="#" id="forgot" style="margin-left:auto;color:var(--accent-1);font-size:13px;text-decoration:none">Forgot password?</a>
+      </div>
+
+      <div style="margin-top:14px;display:flex;gap:12px">
+        <button class="btn" onclick="handleLogin()">Sign In</button>
+       
+      </div>
+
+      <p class="note">Only authorized admins can log in. Actions are audited and secured.</p>
+
+      <div class="footer-links" aria-hidden="true">
+        <a href="#">Terms</a>
+        <a href="#">Privacy</a>
+        <a href="#">Help</a>
+      </div>
+    </main>
+
+  </div>
+
+  <script>
+    function handleLogin(){
+      const user = document.getElementById('username').value.trim();
+      const pass = document.getElementById('password').value.trim();
+
+      const correctUser = 'jaithindaltiles';
+      const correctPass = 'jaithindal';
+
+      if(!user || !pass){
+        alert('Please enter username and password.');
+        return;
+      }
+
+      if(user === correctUser && pass === correctPass){
+        // nice transition before redirect
+        document.querySelector('.card').style.opacity = 0.9;
+        window.location.href = 'home-dashboard.html';
+      } else {
+        // subtle shake animation
+        const card = document.querySelector('.card');
+        card.style.transition = 'transform 0.15s';
+        card.style.transform = 'translateX(-8px)';
+        setTimeout(()=> card.style.transform = 'translateX(8px)',150);
+        setTimeout(()=> card.style.transform = 'translateX(0)',300);
+        alert('Incorrect username or password.');
+      }
+    }
+
+    function demoCreds(){
+      document.getElementById('username').value = 'jaithindaltiles';
+      document.getElementById('password').value = 'jaithindal';
+    }
+  </script>
+</body>
+</html>

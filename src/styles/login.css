@@ -1,0 +1,222 @@
+/* src/styles/login.css */
+:root {
+    --bg: #eef6f0;
+    --card: #ffffff;
+    --muted: #6b7280;
+    --accent-1: #255a3f;
+    --accent-2: #2f6b4b;
+    --accent-3: #7ac08a;
+    --shadow: 0 12px 30px rgba(16, 24, 20, 0.08);
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+}
+
+.login-body {
+    background: radial-gradient(1200px 400px at 10% 10%, rgba(47, 107, 75, 0.06), transparent),
+        radial-gradient(900px 300px at 90% 90%, rgba(18, 67, 39, 0.03), transparent),
+        var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 28px;
+}
+
+.login-wrap {
+    width: 100%;
+    max-width: 980px;
+    display: grid;
+    grid-template-columns: 420px 1fr;
+    gap: 28px;
+    align-items: center;
+}
+
+/* Left: Brand / Poster */
+.login-panel {
+    background: linear-gradient(135deg, var(--accent-2), var(--accent-1));
+    color: white;
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 18px 50px rgba(15, 40, 30, 0.18);
+    min-height: 420px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.login-logo {
+    width: 64px;
+    height: 64px;
+    border-radius: 12px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 18px;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
+.login-brand h1 {
+    font-size: 20px;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+}
+
+.login-brand p {
+    font-size: 13px;
+    opacity: 0.95;
+    margin-top: 2px;
+}
+
+.panel-hero {
+    margin-top: 18px;
+    font-size: 14px;
+    line-height: 1.6;
+    opacity: 0.95;
+}
+
+.decor-blob {
+    position: absolute;
+    right: -60px;
+    bottom: -40px;
+    width: 260px;
+    height: 260px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.08), transparent 40%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent);
+    transform: rotate(18deg);
+    filter: blur(10px);
+}
+
+/* Right: Login card */
+.login-card {
+    background: var(--card);
+    padding: 28px;
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(15, 23, 16, 0.04);
+    transition: transform 0.15s;
+}
+
+.login-card h2 {
+    font-size: 20px;
+    margin-bottom: 6px;
+}
+
+.login-card p.sub {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 18px;
+}
+
+.form-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.field {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(180deg, #ffffff, #fbfffb);
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    transition: box-shadow .18s, transform .12s;
+}
+
+.field:focus-within {
+    box-shadow: 0 10px 30px rgba(47, 107, 75, 0.06);
+    transform: translateY(-2px);
+}
+
+.field input {
+    border: 0;
+    outline: 0;
+    font-size: 14px;
+    width: 100%;
+    background: transparent;
+}
+
+.actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+}
+
+.checkbox {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    color: var(--muted);
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 0;
+    font-weight: 700;
+    cursor: pointer;
+    background: linear-gradient(90deg, var(--accent-2), var(--accent-3));
+    color: white;
+    box-shadow: 0 14px 30px rgba(47, 107, 75, 0.18);
+    transition: transform .12s, box-shadow .12s;
+}
+
+.btn:active {
+    transform: translateY(1px);
+}
+
+.note {
+    color: var(--muted);
+    font-size: 13px;
+    text-align: center;
+    margin-top: 14px;
+}
+
+.footer-links {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 14px;
+}
+
+.footer-links a {
+    font-size: 13px;
+    color: var(--accent-1);
+    text-decoration: none;
+}
+
+.muted {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+@media (max-width: 880px) {
+    .login-wrap {
+        grid-template-columns: 1fr;
+        max-width: 460px;
+    }
+
+    .login-panel {
+        order: 2;
+    }
+}

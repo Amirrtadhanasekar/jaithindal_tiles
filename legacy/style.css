@@ -1,0 +1,226 @@
+/* ---------- Global Theme ---------- */
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f7f6; /* soft showroom background */
+  padding: 20px;
+  color: #1f2937;
+}
+
+/* ---------- Main Container ---------- */
+.container {
+  max-width: 1000px;
+  margin: auto;
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 14px;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.08);
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+/* ---------- Heading ---------- */
+h1 {
+  text-align: center;
+  color: #2f6b4b;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+
+/* ---------- Design Name Input ---------- */
+.design-name {
+  width: 100%;
+  max-width: 300px;
+  padding: 10px 12px;
+  margin: 6px 0 12px;
+  border: 1px solid #b2b8b3;
+  border-radius: 10px;
+  font-size: 15px;
+  transition: 0.2s ease-in-out;
+  background: #fdfdfd;
+}
+
+.design-name:focus {
+  border-color: #2f6b4b;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(47,107,75,0.25);
+}
+
+.room-section label[for="design-name"],
+.room-section label strong {
+  font-weight: 600;
+  color: #2f6b4b;
+}
+
+/* ---------- Section Cards ---------- */
+.room-section {
+  margin-top: 20px;
+  background-color: #f8faf7;
+  padding: 18px;
+  border-radius: 12px;
+  border-left: 5px solid #2f6b4b;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.05);
+}
+
+.card {
+  background-color: #fffdf5;
+  border-left: 5px solid #e6a93f;
+  padding: 15px;
+  border-radius: 10px;
+  margin-top: 10px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.05);
+}
+
+.card h3 {
+  margin: 0 0 10px;
+  color: #2f3e46;
+}
+
+/* ---------- Number Inputs in Cards ---------- */
+.card input[type="number"] {
+  margin-bottom: 10px;
+  display: block;
+  width: 220px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #bcbcbc;
+  background: white;
+}
+
+/* ---------- Input Group ---------- */
+.input-group {
+  margin-bottom: 20px;
+}
+
+.input-group label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #2f6b4b;
+}
+
+/* ---------- Global Inputs ---------- */
+input[type="number"], select {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 10px;
+  border: 1px solid #b2b8b3;
+  background: #ffffff;
+  transition: 0.2s ease-in-out;
+}
+
+input[type="number"]:focus, select:focus {
+  border-color: #2f6b4b;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(47,107,75,0.25);
+}
+
+/* ---------- Toast Message ---------- */
+.toast {
+  visibility: hidden;
+  min-width: 250px;
+  background-color: #2f6b4b;
+  color: white;
+  text-align: center;
+  border-radius: 10px;
+  padding: 16px;
+  position: fixed;
+  z-index: 100;
+  right: 30px;
+  top: 30px;
+  font-size: 16px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  transition: visibility 0.3s, transform 0.3s ease, opacity 0.3s ease;
+}
+
+.toast.show {
+  visibility: visible;
+  transform: translateY(0px);
+  opacity: 1;
+}
+
+/* ---------- Buttons ---------- */
+button {
+  background: linear-gradient(135deg, #2f6b4b, #638f78);
+  color: white;
+  padding: 12px 20px;
+  font-size: 15px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  margin: 10px 0;
+  font-weight: 600;
+  transition: 0.2s ease-in-out;
+  box-shadow: 0 6px 15px rgba(47,107,75,0.25);
+}
+
+button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(47,107,75,0.35);
+}
+
+/* ---------- Area Section ---------- */
+.area-section {
+  background: #f3faf5;
+  padding: 18px;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  border-left: 5px solid #2f6b4b;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.05);
+}
+
+/* ---------- Design Number Input Group ---------- */
+.design-number-wrapper {
+  margin-top: 8px;
+  margin-bottom: 12px;
+}
+
+.design-number-wrapper label {
+  font-weight: bold;
+  color: #2f6b4b;
+}
+
+.design-number {
+  width: 100%;
+  max-width: 300px;
+  padding: 10px 12px;
+  border: 1px solid #b2b8b3;
+  border-radius: 8px;
+  background: white;
+  transition: 0.2s ease-in-out;
+}
+
+.design-number:focus {
+  border-color: #2f6b4b;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(47,107,75,0.25);
+}
+
+/* ---------- Output Box ---------- */
+.output-details {
+  background: #eef3ef;
+  padding: 18px;
+  margin-top: 15px;
+  border-radius: 10px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.05);
+  border-left: 4px solid #2f6b4b;
+}
+
+/* ---------- Headings Theme ---------- */
+h3, h4, h5 {
+  color: #2f6b4b;
+}
+
+/* ---------- Print Styling ---------- */
+@media print {
+  body {
+    font-size: 14px;
+  }
+
+  .area-section,
+  .output-details {
+    page-break-inside: avoid;
+  }
+
+  button {
+    display: none;
+  }
+}

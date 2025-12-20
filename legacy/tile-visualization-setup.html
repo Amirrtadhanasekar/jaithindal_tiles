@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Tile Visualization Setup - Jai Thindal Tiles</title>
+  <link rel="stylesheet" href="tile-visualization-setup.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+   <header class="topbar">
+    <div class="brand">
+      <div class="logo-circle">JTT</div>
+      <div class="brand-text">
+        <div class="brand-name">JAI THINDAL TILES</div>
+      </div>
+    </div>
+
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <button class="crumb" onclick="window.location.href='custom.html'">Customer Details</button>
+      <button class="crumb " onclick="window.location.href='home-dashboard.html'">Home</button>
+      <button class="crumb active" onclick="window.location.href='tile-visualization-setup.html'">Room Setup</button>
+      <button class="crumb ">AI Generation</button>
+      <button class="crumb" onclick="window.location.href='tile-selection.html'">Tile Selection</button>
+    </nav>
+
+  </header>
+
+
+  <main class="setup-page">
+    <div class="container">
+      <div class="page-header">
+        <h1>Tile Visualization Setup</h1>
+        <p class="muted">Configure room parameters for AI-powered 3D visualization</p>
+      </div>
+
+      <!-- Room Types -->
+      <section class="card">
+        <h4 class="section-head">Select Room Type</h4>
+        <p class="muted small">Choose the type of room you want to visualize</p>
+
+        <div class="room-grid">
+          <button class="room-card" data-room="Kitchen">
+            <div class="room-icon">🍽️</div>
+            <div class="room-title">Kitchen</div>
+            <div class="room-desc muted">Modern kitchen spaces with countertops and backsplash areas</div>
+          </button>
+
+          <button class="room-card" data-room="Bedroom">
+            <div class="room-icon">🛏️</div>
+            <div class="room-title">Bedroom</div>
+            <div class="room-desc muted">Comfortable bedroom floors and accent walls</div>
+          </button>
+
+          <button class="room-card" data-room="Bathroom">
+            <div class="room-icon">🚿</div>
+            <div class="room-title">Bathroom</div>
+            <div class="room-desc muted">Waterproof bathroom walls and floors</div>
+          </button>
+
+          <button class="room-card" data-room="Living Room">
+            <div class="room-icon">🛋️</div>
+            <div class="room-title">Living Room</div>
+            <div class="room-desc muted">Spacious living areas with elegant flooring</div>
+          </button>
+
+          <button class="room-card" data-room="Balcony">
+            <div class="room-icon">🏖️</div>
+            <div class="room-title">Balcony</div>
+            <div class="room-desc muted">Outdoor balcony spaces with weather-resistant tiles</div>
+          </button>
+
+          <button class="room-card" data-room="Elevation">
+            <div class="room-icon">🏢</div>
+            <div class="room-title">Elevation</div>
+            <div class="room-desc muted">Exterior building facades and elevation designs</div>
+          </button>
+
+          <button class="room-card" data-room="Parking">
+            <div class="room-icon">🚗</div>
+            <div class="room-title">Parking</div>
+            <div class="room-desc muted">Durable parking area flooring solutions</div>
+          </button>
+        </div>
+      </section>
+
+      <!-- Room Dimensions -->
+      <section class="card mt">
+        <h4 class="section-head">Room Dimensions</h4>
+        <p class="muted small">Choose your preferred measurement method</p>
+
+        <div class="dim-methods">
+          <label class="dim-radio selected" data-method="width-length">
+            <input type="radio" name="dimMethod" value="width-length" checked>
+            <div class="radio-title">Width &amp; Length</div>
+            <div class="radio-sub muted">Enter separate measurements</div>
+          </label>
+
+          <label class="dim-radio" data-method="total-area">
+            <input type="radio" name="dimMethod" value="total-area">
+            <div class="radio-title">Total Area</div>
+            <div class="radio-sub muted">Enter total square feet</div>
+          </label>
+        </div>
+
+        <div class="dim-inputs">
+          <div class="dim-col">
+            <label class="field">
+              <span class="label-text">Width (feet) *</span>
+              <input id="width" type="number" min="1" placeholder="Enter width" value="">
+              <small class="muted">Minimum 1 foot</small>
+            </label>
+          </div>
+          <div class="dim-col">
+            <label class="field">
+              <span class="label-text">Length (feet) *</span>
+              <input id="length" type="number" min="1" placeholder="Enter length" value="">
+              <small class="muted">Minimum 1 foot</small>
+            </label>
+          </div>
+        </div>
+
+        <div class="dim-total hidden">
+          <label class="field">
+            <span class="label-text">Total Area (sq.ft) *</span>
+            <input id="totalArea" type="number" min="1" placeholder="Enter area" value="">
+            <small class="muted">Enter total square feet</small>
+          </label>
+        </div>
+      </section>
+
+      <!-- Room Model -->
+      <section class="card mt">
+        <h4 class="section-head">Room Model</h4>
+        <p class="muted small">Select the room style for visualization</p>
+
+        <div class="model-row">
+          <button class="model-card selected" data-model="Normal Room">
+            <div class="model-title">Normal Room</div>
+            <div class="model-desc muted">Standard room layout with basic structure and proportions</div>
+            <div class="model-tag">Selected</div>
+          </button>
+
+          <button class="model-card disabled" data-model="Luxury Room">
+            <div class="model-title">Luxury Room</div>
+            <div class="model-desc muted">Premium room design with elegant features and spacious layout</div>
+            <div class="coming">Coming Soon</div>
+          </button>
+
+          <button class="model-card disabled" data-model="Compact Room">
+            <div class="model-title">Compact Room</div>
+            <div class="model-desc muted">Space-efficient design optimized for smaller areas</div>
+            <div class="coming">Coming Soon</div>
+          </button>
+        </div>
+      </section>
+
+      <!-- Ready to generate -->
+      <section class="card mt">
+        <div class="ready-row">
+          <div class="ready-info">
+            <h4>Ready to Generate?</h4>
+            <ul class="ready-list muted">
+              <li>Room Type: <span id="readyRoom">Not selected</span></li>
+              <li>Total Area: <span id="readyArea">0.00 sq. ft</span></li>
+              <li>Room Model: <span id="readyModel">Normal Room</span></li>
+            </ul>
+          </div>
+
+          <div class="ready-actions">
+            <button id="backBtn" class="btn-outline">← Back to Home</button>
+            <button id="generateBtn" class="btn-primary">Generate 3D Room ⚙️</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="tile-visualization-setup.js"></script>
+</body>
+</html>

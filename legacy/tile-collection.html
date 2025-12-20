@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin - JAI THINDAL TILES</title>
+
+<style>
+/* THEME COLORS */
+:root {
+    --bg: #fafaf9;
+    --card: #ffffff;
+    --primary: #2f6b4b;
+    --primary-light: #d9f2e4;
+    --muted: #6b7280;
+    --shadow: 0 10px 25px rgba(0,0,0,0.06);
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+}
+
+/* HEADER */
+.header {
+    text-align: center;
+    padding: 28px 0;
+    background: linear-gradient(135deg, #2f6b4b, #5aa57a);
+    color: white;
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+/* MAIN CONTAINER */
+.container {
+    width: 82%;
+    margin: 30px auto;
+    background: var(--card);
+    padding: 30px;
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(0,0,0,0.04);
+}
+
+/* FORM STYLES */
+.input-group {
+    margin-bottom: 18px;
+}
+
+label {
+    font-weight: 600;
+    color: var(--primary);
+    font-size: 15px;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    margin-top: 6px;
+    border-radius: 10px;
+    border: 1px solid rgba(0,0,0,0.15);
+    outline: none;
+    font-size: 14px;
+}
+
+input:focus, select:focus {
+    border-color: var(--primary);
+}
+
+/* BUTTONS */
+.btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    cursor: pointer;
+    font-weight: 600;
+    color: white;
+    transition: 0.2s;
+}
+
+.floor-btn { background: #2f6b4b; }
+.wall-btn { background: #9153a3; }
+
+.btn:hover {
+    opacity: 0.9;
+}
+
+/* TILE COLLECTION LIST */
+.collection {
+    margin-top: 30px;
+}
+
+.tile-item {
+    display: flex;
+    gap: 20px;
+    background: var(--primary-light);
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid #c9e7d7;
+    margin-bottom: 14px;
+    align-items: center;
+}
+
+.tile-item img {
+    width: 110px;
+    height: 110px;
+    border-radius: 10px;
+    object-fit: cover;
+    border: 2px solid var(--primary);
+}
+
+.delete-btn {
+    padding: 10px 16px;
+    background: #d9534f;
+    border: none;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.delete-btn:hover {
+    opacity: 0.85;
+}
+
+/* TITLES */
+h2, h3 {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">ADMIN PANEL - JAI THINDAL TILES</div>
+
+<div class="container">
+
+    <h3>Upload Tile</h3>
+
+    <div class="input-group">
+        <label>Tile Image</label>
+        <input type="file" id="tileImage" accept="image/*">
+    </div>
+
+    <div class="input-group">
+        <label>Tile Size</label>
+        <input type="text" id="tileSize" placeholder="Ex: 2x2, 4x4">
+    </div>
+
+    <div class="input-group">
+        <label>Design Number</label>
+        <input type="text" id="designNumber">
+    </div>
+
+    <div class="input-group">
+        <label>Tile Amount (₹)</label>
+        <input type="number" id="tileAmount">
+    </div>
+
+    <div class="input-group">
+        <label>Tile Type</label>
+        <select id="tileType">
+            <option value="floor">Floor Tile</option>
+            <option value="wall">Wall Tile</option>
+        </select>
+    </div>
+
+    <button class="btn floor-btn" onclick="saveTile('floor')">Save to Floor</button>
+    <button class="btn wall-btn" onclick="saveTile('wall')">Save to Wall</button>
+    <button class="btn floor-btn" onclick="clearall()">Clear Form</button>
+</div>
+
+<div class="container collection">
+    <h2>Floor Tile Collection</h2>
+    <div id="floorList"></div>
+</div>
+
+<div class="container collection">
+    <h2>Wall Tile Collection</h2>
+    <div id="wallList"></div>
+</div>
+
+<script>
+
+// Convert file → Base64
+function getBase64(file, callback) {
+    const reader = new FileReader();
+    reader.onload = () => callback(reader.result);
+    reader.readAsDataURL(file);
+}
+function clearall() {
+    document.getElementById("tileImage").value = "";
+    document.getElementById("tileSize").value = "";
+    document.getElementById("designNumber").value = "";
+    document.getElementById("tileAmount").value = "";
+    document.getElementById("tileType").value = "floor";
+
+    alert("Form cleared successfully!");
+}
+
+// Save Tile
+function saveTile(type) {
+    const imgFile = document.getElementById("tileImage").files[0];
+    const size = document.getElementById("tileSize").value;
+    const design = document.getElementById("designNumber").value;
+    const amount = document.getElementById("tileAmount").value;
+
+    if (!imgFile || !size || !design || !amount) {
+        alert("Please fill all fields!");
+        return;
+    }
+
+    getBase64(imgFile, base64 => {
+        let tiles = JSON.parse(localStorage.getItem(type)) || [];
+
+        tiles.push({
+            image: base64,
+            size: size,
+            design: design,
+            amount: amount
+        });
+
+        localStorage.setItem(type, JSON.stringify(tiles));
+        alert("Tile saved!");
+        loadTiles();
+    });
+}
+
+// Load Tiles
+function loadTiles() {
+    loadTileType("floor", "floorList");
+    loadTileType("wall", "wallList");
+}
+
+function loadTileType(type, containerId) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = "";
+
+    let tiles = JSON.parse(localStorage.getItem(type)) || [];
+
+    tiles.forEach((tile, index) => {
+        const item = document.createElement("div");
+        item.className = "tile-item";
+
+        item.innerHTML = `
+            <img src="${tile.image}">
+            <div>
+                <p><b>Size:</b> ${tile.size}</p>
+                <p><b>Design:</b> ${tile.design}</p>
+                <p><b>Amount:</b> ₹${tile.amount}</p>
+            </div>
+            <button class="delete-btn" onclick="deleteTile('${type}', ${index})">Delete</button>
+        `;
+
+        container.appendChild(item);
+    });
+}
+
+// Delete Tile
+function deleteTile(type, index) {
+    let tiles = JSON.parse(localStorage.getItem(type)) || [];
+    tiles.splice(index, 1);
+    localStorage.setItem(type, JSON.stringify(tiles));
+    loadTiles();
+}
+
+window.onload = loadTiles;
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Customer Details - Jai Thindal Tiles</title>
+  <link rel="stylesheet" href="cust.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <main class="page">
+    <div class="page-inner">
+      <div class="heading">
+        <div class="avatar">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 12a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zM4 20c0-3.313 2.687-6 6-6h4c3.313 0 6 2.687 6 6" stroke="#29513B" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h1>Customer Details</h1>
+        <p class="subtitle">Please provide your information to begin your tile visualization journey</p>
+      </div>
+
+      <section class="card">
+        <form id="customerForm" class="form" autocomplete="off">
+          <div class="section">
+            <div class="section-title">
+              <div class="step">1</div>
+              <div>Customer Information</div>
+            </div>
+
+            <label class="field">
+              <span class="label-text">Full Name <span class="required">*</span></span>
+              <input type="text" name="fullname" id="fullname" placeholder="Enter customer's full name" required />
+              <small class="hint">As per official documents</small>
+            </label>
+
+            <label class="field">
+              <span class="label-text">Phone Number <span class="required">*</span></span>
+              <input type="tel" name="phone" id="phone" placeholder="Enter 10-digit mobile number" maxlength="10" pattern="[0-9]{10}" required />
+              <small class="hint">We'll use this for order updates</small>
+            </label>
+
+            <label class="field">
+              <span class="label-text">Address <span class="required">*</span></span>
+              <textarea name="address" id="address" rows="3" placeholder="Enter complete address with landmark" required></textarea>
+              <small class="hint">Include street, area, and city</small>
+            </label>
+          </div>
+
+          <div class="section">
+            <div class="section-title">
+              <div class="step">2</div>
+              <div>Assign Sales Representative</div>
+            </div>
+
+            <label class="field">
+              <span class="label-text">Select Attender <span class="required">*</span></span>
+              <select name="attender" id="attender" required>
+                <option value="">Choose a sales representative</option>
+                <option>Arun</option>
+                <option>Deepa</option>
+                <option>Ramesh</option>
+                <option>Suresh</option>
+              </select>
+              <small class="hint">Select the company representative assisting this customer</small>
+            </label>
+          </div>
+
+          <div class="actions">
+            <button type="button" id="resetBtn" class="btn-outline">Reset Form</button>
+            <button type="submit" class="btn-primary" id="continueBtn">Continue to Home ➜</button>
+          </div>
+        </form>
+      </section>
+
+      <p class="terms">By continuing, you agree to JAI THINDAL TILES terms of service</p>
+    </div>
+  </main>
+
+  <script src="cust.js"></script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Home Dashboard - Jai Thindal Tiles</title>
+  <link rel="stylesheet" href="home-dashboard.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="topbar">
+    <div class="brand">
+      <div class="logo-circle">JTT</div>
+      <div class="brand-text">
+        <div class="brand-name">JAI THINDAL TILES</div>
+      </div>
+    </div>
+
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <button class="crumb" onclick="window.location.href='custom.html'">Customer Details</button>
+      <button class="crumb active" onclick="window.location.href='home-dashboard.html'">Home</button>
+      <button class="crumb" onclick="window.location.href='tile-visualization-setup.html'">Room Setup</button>
+      <button class="crumb">AI Generation</button>
+      <button class="crumb">Tile Selection</button>
+    </nav>
+  </header>
+
+
+  <main class="dashboard">
+    <div class="container">
+      <!-- Welcome card -->
+      <section class="welcome card">
+        <div class="welcome-left">
+          <h2 id="greeting">Good Morning, Valued Customer!</h2>
+          <p class="muted">Welcome to Jai Thindal Tiles</p>
+          <p class="welcome-text">Transform your space with AI-powered tile visualization and get instant cost estimates. Our advanced technology helps you make confident decisions for your home renovation projects.</p>
+          <p class="assisted muted">Assisted by: <span id="attenderName">Sales Representative</span></p>
+        </div>
+        <div class="welcome-right">
+          <div class="small-card">
+            <small class="muted">Session Date</small>
+            <div id="sessionDate">--</div>
+          </div>
+          <div class="small-card mt">
+            <small class="muted">Current Time</small>
+            <div id="currentTime">--</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- stats -->
+      <section class="stats-row">
+        <div class="stat card">
+          <div class="stat-number">500+</div>
+          <div class="stat-label muted">Tile Collections</div>
+        </div>
+        <div class="stat card">
+          <div class="stat-number">50+</div>
+          <div class="stat-label muted">Room Styles</div>
+        </div>
+        <div class="stat card">
+          <div class="stat-number">1000+</div>
+          <div class="stat-label muted">Design Options</div>
+        </div>
+        <div class="stat card">
+          <div class="stat-number">10K+</div>
+          <div class="stat-label muted">Happy Customers</div>
+        </div>
+      </section>
+
+      <h3 class="section-title">Choose Your Service</h3>
+      <p class="section-sub muted">Select the service that best fits your needs. You can always switch between services during your session.</p>
+
+      <!-- service cards -->
+      <section class="services-row">
+
+        <!-- Tile Visualization -->
+        <article class="service card gradient-green">
+          <div class="service-icon">★</div>
+          <h4>Tile Visualization</h4>
+          <p class="muted">Experience your dream space before installation. Our AI-powered 3D visualization lets you see exactly how different tiles will look in your room.</p>
+          <ul class="features muted">
+            <li>AI-generated 3D room models</li>
+            <li>Real-time tile placement</li>
+            <li>Multiple room type support</li>
+            <li>Interactive design preview</li>
+          </ul>
+          <div class="service-action">
+            <button class="btn-primary-outline" id="vizBtn">Get Started ➜</button>
+          </div>
+        </article>
+
+        <!-- Cost Estimation -->
+        <article class="service card gradient-brown">
+          <div class="service-icon">▣</div>
+          <h4>Cost Estimation</h4>
+          <p class="muted">Get accurate, detailed cost estimates instantly. Our smart calculator considers all factors including materials, labor, and additional requirements.</p>
+          <ul class="features muted">
+            <li>Detailed cost breakdown</li>
+            <li>Tamil voice output</li>
+            <li>Printable estimates</li>
+            <li>Material quantity calculation</li>
+          </ul>
+          <div class="service-action">
+            <button class="btn-primary-outline" onclick="window.location.href='index.html'">Get Started ➜</button>
+          </div>
+        </article>
+
+        <!-- Tile Visualization -->
+        <article class="service card gradient-green">
+          <div class="service-icon">🧱</div>
+          <h4>Tile Collection</h4>
+          <p class="muted">Explore our entire collection of tiles including floor tiles, wall tiles, kitchen tiles, outdoor tiles, and premium designer collections.</p>
+          <ul class="features muted">
+            <li>High-quality product images</li>
+            <li>Category-wise browsing</li>
+            <li>Filter by size, color, finish</li>
+            <li>Add to favorite list</li>
+          </ul>
+          <div class="service-action">
+            <button class="btn-primary-outline" id="vizBtn" onclick="window.location.href='tile-collection.html'">Explore ➜</button>
+          </div>
+        </article>
+      </section>
+
+      <h3 class="section-title">Why Choose JAI THINDAL TILES?</h3>
+
+      <section class="features-row">
+        <div class="feature card">
+          <div class="icon">🏅</div>
+          <div class="feature-title">Premium Quality</div>
+          <div class="muted small">Certified tiles with 10+ years warranty</div>
+        </div>
+        <div class="feature card">
+          <div class="icon">🤖</div>
+          <div class="feature-title">AI Technology</div>
+          <div class="muted small">Advanced 3D visualization & estimation</div>
+        </div>
+        <div class="feature card">
+          <div class="icon">🧑‍💼</div>
+          <div class="feature-title">Expert Support</div>
+          <div class="muted small">Professional guidance throughout</div>
+        </div>
+        <div class="feature card">
+          <div class="icon">🔒</div>
+          <div class="feature-title">Trusted Brand</div>
+          <div class="muted small">Serving customers since 2010</div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="home-dashboard.js"></script>
+</body>
+</html>
