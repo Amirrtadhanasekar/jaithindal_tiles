@@ -248,16 +248,22 @@ const RoomSetup = () => {
                                 {selectedModel === 'Normal Room' && <div className="model-tag">Selected</div>}
                             </button>
 
-                            <button className="model-card disabled" onClick={() => handleModelSelect('Luxury Room', true)}>
+                            <button
+                                className={`model-card ${selectedModel === 'Luxury Room' ? 'selected' : ''}`}
+                                onClick={() => handleModelSelect('Luxury Room', false)}
+                            >
                                 <div className="model-title">Luxury Room</div>
                                 <div className="model-desc muted">Premium room design with elegant features and spacious layout</div>
-                                <div className="coming">Coming Soon</div>
+                                {selectedModel === 'Luxury Room' && <div className="model-tag">Selected</div>}
                             </button>
 
-                            <button className="model-card disabled" onClick={() => handleModelSelect('Compact Room', true)}>
+                            <button
+                                className={`model-card ${selectedModel === 'Compact Room' ? 'selected' : ''}`}
+                                onClick={() => handleModelSelect('Compact Room', false)}
+                            >
                                 <div className="model-title">Compact Room</div>
                                 <div className="model-desc muted">Space-efficient design optimized for smaller areas</div>
-                                <div className="coming">Coming Soon</div>
+                                {selectedModel === 'Compact Room' && <div className="model-tag">Selected</div>}
                             </button>
                         </div>
                     </section>

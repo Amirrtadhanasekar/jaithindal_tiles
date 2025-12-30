@@ -40,6 +40,8 @@ const customerSchema = new mongoose.Schema({
     totalAmount: { type: Number },
     totalArea: { type: Number },
     totalWeight: { type: Number },
+    loadingCharges: { type: Number }, // Added
+    totalTileCost: { type: Number },  // Added
     rooms: [{
         name: String,
         areaType: String,
@@ -54,7 +56,13 @@ const customerSchema = new mongoose.Schema({
             price: Number,
             cost: Number,
             weight: Number,
-            description: String
+            description: String,
+            // Detailed breakdown for Wall Tiles
+            darkBoxes: Number,
+            lightBoxes: Number,
+            highlightBoxes: Number,
+            tilesPerWidth: Number,
+            tilesPerLength: Number
         }]
     }],
     createdAt: { type: Date, default: Date.now }
@@ -108,6 +116,8 @@ app.post('/api/customers', async (req, res) => {
             totalAmount: totalAmount || 0,
             totalArea: totalArea || 0,
             totalWeight: totalWeight || 0,
+            loadingCharges: req.body.loadingCharges || 0,
+            totalTileCost: req.body.totalTileCost || 0,
             rooms: rooms || [],
             createdAt: new Date()
         };

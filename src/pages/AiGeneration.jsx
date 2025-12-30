@@ -2,9 +2,9 @@ import React, { useEffect, useState, useRef, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as THREE from 'three';
 import { Canvas, useThree, useFrame } from '@react-three/fiber';
-import { OrbitControls, Html, useProgress, PerspectiveCamera, useTexture } from '@react-three/drei';
+import { OrbitControls, Html, useProgress, PerspectiveCamera, useTexture, PointerLockControls } from '@react-three/drei';
 import '../styles/ai-generation.css';
-import { ArrowLeft, Box, Maximize, RotateCcw, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Box, Maximize, RotateCcw, ChevronRight, Camera, Footprints } from 'lucide-react';
 
 // --- Room Rendering Component (The 3D Logic) ---
 // --- Room Rendering Component (The 3D Logic) ---
@@ -89,6 +89,31 @@ const TexturedBox = ({ size, position, rotation, imageUrl, scaleFt }) => {
     );
 };
 
+// --- Standard Fixtures (Normal Room) ---
+const StandardFixtures = ({ roomW, roomL, roomH, lightIntensity }) => {
+    return (
+        <group position={[-roomW * 0.4, 0, -roomL * 0.4]}>
+            {/* Lamp Base */}
+            <mesh position={[0, 0.02, 0]}>
+                <cylinderGeometry args={[0.1, 0.1, 0.04, 32]} />
+                <meshStandardMaterial color="#333" />
+            </mesh>
+            {/* Pole */}
+            <mesh position={[0, roomH * 0.4, 0]}>
+                <cylinderGeometry args={[0.015, 0.015, roomH * 0.8, 16]} />
+                <meshStandardMaterial color="#333" />
+            </mesh>
+            {/* Shade */}
+            <mesh position={[0, roomH * 0.8, 0]}>
+                <cylinderGeometry args={[0.15, 0.25, 0.25, 32, 1, true]} />
+                <meshStandardMaterial color="#fafafa" transparent opacity={0.9} side={THREE.DoubleSide} />
+            </mesh>
+            {/* Dynamic Light */}
+            <pointLight position={[0, roomH * 0.8, 0]} intensity={lightIntensity} color="#fff" distance={10} decay={2} />
+        </group>
+    );
+};
+
 // Refined "Smart" Textured Mesh that handles orientation repeats
 const SmartTexturedMesh = ({ size, position, rotation, imageUrl, faceDimensions, scaleFt }) => {
     const tex = useTexture(imageUrl);
@@ -115,6 +140,45 @@ const PlainMesh = ({ size, position, rotation, color = 0xf2efe8, roughness = 1 }
         <meshStandardMaterial color={color} roughness={roughness} />
     </mesh>
 );
+
+// --- Walk Logic ---
+const WalkManager = ({ active, eyeLevel = 1.6 }) => {
+    const { camera } = useThree();
+    const [move, setMove] = useState({ f: false, b: false, l: false, r: false });
+
+    useEffect(() => {
+        if (!active) return;
+        const handleKey = (e, isDown) => {
+            const k = e.key.toLowerCase();
+            if (k === 'w' || k === 'arrowup') setMove(p => ({ ...p, f: isDown }));
+            if (k === 's' || k === 'arrowdown') setMove(p => ({ ...p, b: isDown }));
+            if (k === 'a' || k === 'arrowleft') setMove(p => ({ ...p, l: isDown }));
+            if (k === 'd' || k === 'arrowright') setMove(p => ({ ...p, r: isDown }));
+        };
+        const down = e => handleKey(e, true);
+        const up = e => handleKey(e, false);
+        window.addEventListener('keydown', down);
+        window.addEventListener('keyup', up);
+        return () => {
+            window.removeEventListener('keydown', down);
+            window.removeEventListener('keyup', up);
+        };
+    }, [active]);
+
+    useFrame((_, delta) => {
+        if (!active) return;
+        const speed = 2.5 * delta; // Speed in scale units (approx)
+        if (move.f) camera.translateZ(-speed);
+        if (move.b) camera.translateZ(speed);
+        if (move.l) camera.translateX(-speed);
+        if (move.r) camera.translateX(speed);
+
+        // Enforce eye level height roughly
+        // We allow some bobbing or just hardlock Y to prevent flying
+        // camera.position.y = eyeLevel; 
+    });
+    return null;
+};
 
 const KitchenFeatures = ({ roomW, roomL, roomH }) => {
     // Scaling factor from RoomScene
@@ -237,39 +301,137 @@ const BathroomFeatures = ({ roomW, roomL, roomH }) => {
     const S = 0.12;
     return (
         <group>
-            {/* Toilet Area */}
-            <group position={[roomW * 0.3, 0, -roomL * 0.3]}>
-                <mesh position={[0, S * 1.5, 0]}> {/* Bowl */}
-                    <cylinderGeometry args={[S * 1.2, S * 0.8, S * 3]} />
-                    <meshStandardMaterial color="white" />
+            {/* Modern Vanity Unit (Left Side) */}
+            <group position={[-roomW * 0.35, 0, -roomL * 0.4]}>
+                {/* Cabinet */}
+                <mesh position={[0, S * 3, 0]} castShadow receiveShadow>
+                    <boxGeometry args={[S * 6, S * 6, S * 4]} />
+                    <meshStandardMaterial color="#424242" roughness={0.6} />
                 </mesh>
-                <mesh position={[0, S * 4, -S * 0.8]}> {/* Cistern */}
-                    <boxGeometry args={[S * 3, S * 2, S * 1]} />
-                    <meshStandardMaterial color="white" />
+                {/* Countertop */}
+                <mesh position={[0, S * 6 + 0.02, 0]} receiveShadow>
+                    <boxGeometry args={[S * 6.2, 0.04, S * 4.2]} />
+                    <meshStandardMaterial color="#f5f5f5" roughness={0.2} metalness={0.1} />
+                </mesh>
+                {/* Vessel Sink */}
+                <mesh position={[0, S * 6 + S * 0.5, 0]}>
+                    <cylinderGeometry args={[S * 1.5, S * 1.2, S * 1, 32]} />
+                    <meshStandardMaterial color="white" roughness={0.1} />
+                </mesh>
+                <mesh position={[0, S * 6 + S * 0.6, 0]}>
+                    <cylinderGeometry args={[S * 1.4, S * 1.1, S * 0.9, 32]} />
+                    <meshStandardMaterial color="#ddd" side={THREE.BackSide} />
+                </mesh>
+                {/* Faucet */}
+                <group position={[0, S * 6, -S * 1.2]}>
+                    <mesh position={[0, S * 0.8, 0]}>
+                        <cylinderGeometry args={[0.02, 0.03, S * 1.5]} />
+                        <meshStandardMaterial color="silver" metalness={0.9} roughness={0.1} />
+                    </mesh>
+                    <mesh position={[0, S * 1.4, S * 0.3]} rotation={[Math.PI / 4, 0, 0]}>
+                        <cylinderGeometry args={[0.02, 0.02, S * 0.6]} />
+                        <meshStandardMaterial color="silver" metalness={0.9} roughness={0.1} />
+                    </mesh>
+                </group>
+                {/* Large Measured Mirror */}
+                <group position={[0, S * 12, -S * 2.15]}>
+                    <mesh>
+                        <boxGeometry args={[S * 5.8, S * 8, 0.05]} />
+                        <meshStandardMaterial color="silver" metalness={1} roughness={0.05} />
+                    </mesh>
+                    {/* Frame */}
+                    <mesh position={[0, 0, -0.01]}>
+                        <boxGeometry args={[S * 6, S * 8.2, 0.04]} />
+                        <meshStandardMaterial color="#333" />
+                    </mesh>
+                    {/* Vanity Light Bar */}
+                    <mesh position={[0, S * 4.2, 0.2]}>
+                        <boxGeometry args={[S * 4, S * 0.5, S * 0.5]} />
+                        <meshStandardMaterial color="white" emissive="white" emissiveIntensity={0.8} />
+                    </mesh>
+                </group>
+            </group>
+
+            {/* Contemporary Toilet (Right Side) */}
+            <group position={[roomW * 0.35, 0, -roomL * 0.4]}>
+                {/* Tank */}
+                <mesh position={[0, S * 4, -S * 1]}>
+                    <boxGeometry args={[S * 3.5, S * 3, S * 1.5]} />
+                    <meshStandardMaterial color="white" roughness={0.1} />
+                </mesh>
+                {/* Connector */}
+                <mesh position={[0, S * 2, -S * 0.8]}>
+                    <boxGeometry args={[S * 2, S * 4, S * 2]} />
+                    <meshStandardMaterial color="white" roughness={0.1} />
+                </mesh>
+                {/* Bowl */}
+                <mesh position={[0, S * 2, S * 0.5]}>
+                    <cylinderGeometry args={[S * 1.3, S * 1, S * 2.5]} />
+                    <meshStandardMaterial color="white" roughness={0.1} />
+                </mesh>
+                {/* Seat Lid */}
+                <mesh position={[0, S * 3.3, S * 0.5]} rotation={[-0.1, 0, 0]}>
+                    <cylinderGeometry args={[S * 1.35, S * 1.35, 0.05]} />
+                    <meshStandardMaterial color="white" roughness={0.1} />
                 </mesh>
             </group>
 
-            {/* Washbasin Area */}
-            <group position={[-roomW * 0.3, 0, -roomL * 0.3]}>
-                <mesh position={[0, S * 4, 0]}> {/* Basin */}
-                    <boxGeometry args={[S * 3, S * 0.5, S * 2]} />
-                    <meshStandardMaterial color="white" />
+            {/* Walk-in Shower Area (Front Section) */}
+            <group position={[0, 0, roomL * 0.3]}>
+                {/* Glass Partition */}
+                <mesh position={[0, roomH / 2, 0]}>
+                    <boxGeometry args={[roomW, roomH, 0.05]} />
+                    <meshStandardMaterial color="#aaddff" transparent opacity={0.2} metalness={0.9} roughness={0} />
                 </mesh>
-                <mesh position={[0, S * 2, 0]}> {/* Pedestal */}
-                    <cylinderGeometry args={[S * 0.5, S * 0.8, S * 4]} />
-                    <meshStandardMaterial color="white" />
+                {/* Frame for Glass */}
+                <mesh position={[0, roomH / 2, 0]}>
+                    <boxGeometry args={[roomW + 0.1, roomH + 0.1, 0.04]} />
+                    <meshStandardMaterial color="#111" wireframe />
                 </mesh>
-                {/* Mirror */}
-                <mesh position={[0, S * 8, -S * 1.1]}>
-                    <planeGeometry args={[S * 3, S * 4]} />
-                    <meshStandardMaterial color="#aaddff" metalness={0.8} roughness={0.1} />
+
+                {/* Shower Head */}
+                <group position={[roomW * 0.3, roomH - S * 2, -S * 2]}>
+                    <mesh rotation={[Math.PI / 2, 0, 0]}>
+                        <cylinderGeometry args={[0.02, 0.02, S * 3]} />
+                        <meshStandardMaterial color="silver" metalness={0.9} />
+                    </mesh>
+                    <mesh position={[0, 0, S * 1.5]} rotation={[Math.PI / 2, 0, 0]}>
+                        <cylinderGeometry args={[S * 1, S * 0.1, 0.1]} />
+                        <meshStandardMaterial color="silver" metalness={0.9} />
+                    </mesh>
+                </group>
+
+                {/* Mixer Panel */}
+                <group position={[roomW * 0.3, S * 10, -0.05]}>
+                    <mesh>
+                        <boxGeometry args={[S * 1.5, S * 2.5, 0.05]} />
+                        <meshStandardMaterial color="silver" metalness={0.8} />
+                    </mesh>
+                    <mesh position={[0, 0.1, 0.05]} rotation={[Math.PI / 2, 0, 0]}>
+                        <cylinderGeometry args={[0.03, 0.03, 0.1]} />
+                        <meshStandardMaterial color="#333" />
+                    </mesh>
+                </group>
+
+                {/* Floor Drain */}
+                <mesh position={[roomW * 0.3, 0.01, S * 2]}>
+                    <circleGeometry args={[S * 0.8]} />
+                    <meshStandardMaterial color="#999" />
                 </mesh>
             </group>
-            {/* Shower Area Partition */}
-            <mesh position={[0, roomH / 2, roomL * 0.3]}>
-                <boxGeometry args={[roomW - 0.2, roomH, 0.05]} />
-                <meshStandardMaterial color="#aaddff" transparent opacity={0.3} />
-            </mesh>
+
+            {/* Towel Rack (Side Wall) */}
+            <group position={[-roomW / 2 + 0.1, S * 12, S * 4]}>
+                <mesh rotation={[0, 0, Math.PI / 2]}>
+                    <cylinderGeometry args={[0.02, 0.02, S * 5]} />
+                    <meshStandardMaterial color="silver" metalness={1} />
+                </mesh>
+                {/* Towel */}
+                <mesh position={[0, -S * 1.5, 0]}>
+                    <boxGeometry args={[0.05, S * 3, S * 3]} />
+                    <meshStandardMaterial color="#00bcd4" />
+                </mesh>
+            </group>
         </group>
     );
 };
@@ -383,7 +545,87 @@ const ParkingFeatures = ({ roomW, roomL, roomH }) => {
 };
 
 
-const RoomScene = ({ setup, floorTile, walls, setSceneInfo }) => {
+// --- Luxury Features ---
+const LuxuryFixtures = ({ roomW, roomL, roomH, lightIntensity }) => {
+    const mouldingSize = 0.08;
+    return (
+        <group>
+            {/* Crown Molding (Ceiling) */}
+            <group position={[0, roomH - mouldingSize / 2, 0]}>
+                {/* Back */}
+                <mesh position={[0, 0, -roomL / 2 + mouldingSize / 2]}>
+                    <boxGeometry args={[roomW, mouldingSize, mouldingSize]} />
+                    <meshStandardMaterial color="#fff" roughness={0.3} />
+                </mesh>
+                {/* Front */}
+                <mesh position={[0, 0, roomL / 2 - mouldingSize / 2]}>
+                    <boxGeometry args={[roomW, mouldingSize, mouldingSize]} />
+                    <meshStandardMaterial color="#fff" roughness={0.3} />
+                </mesh>
+                {/* Left */}
+                <mesh position={[-roomW / 2 + mouldingSize / 2, 0, 0]}>
+                    <boxGeometry args={[mouldingSize, mouldingSize, roomL]} />
+                    <meshStandardMaterial color="#fff" roughness={0.3} />
+                </mesh>
+                {/* Right */}
+                <mesh position={[roomW / 2 - mouldingSize / 2, 0, 0]}>
+                    <boxGeometry args={[mouldingSize, mouldingSize, roomL]} />
+                    <meshStandardMaterial color="#fff" roughness={0.3} />
+                </mesh>
+            </group>
+
+            {/* Baseboards (Floor) */}
+            <group position={[0, mouldingSize / 2, 0]}>
+                {/* Back */}
+                <mesh position={[0, 0, -roomL / 2 + mouldingSize / 2]}>
+                    <boxGeometry args={[roomW, mouldingSize, mouldingSize / 4]} />
+                    <meshStandardMaterial color="#fff" roughness={0.3} />
+                </mesh>
+                {/* Front */}
+                <mesh position={[0, 0, roomL / 2 - mouldingSize / 2]}>
+                    <boxGeometry args={[roomW, mouldingSize, mouldingSize / 4]} />
+                    <meshStandardMaterial color="#fff" roughness={0.3} />
+                </mesh>
+                {/* Left */}
+                <mesh position={[-roomW / 2 + mouldingSize / 2, 0, 0]}>
+                    <boxGeometry args={[mouldingSize / 4, mouldingSize, roomL]} />
+                    <meshStandardMaterial color="#fff" roughness={0.3} />
+                </mesh>
+                {/* Right */}
+                <mesh position={[roomW / 2 - mouldingSize / 2, 0, 0]}>
+                    <boxGeometry args={[mouldingSize / 4, mouldingSize, roomL]} />
+                    <meshStandardMaterial color="#fff" roughness={0.3} />
+                </mesh>
+            </group>
+
+            {/* Premium Standing Lamp */}
+            <group position={[-roomW * 0.4, 0, -roomL * 0.4]}>
+                {/* Gold Base */}
+                <mesh position={[0, 0.02, 0]}>
+                    <cylinderGeometry args={[0.12, 0.15, 0.05, 32]} />
+                    <meshStandardMaterial color="#d4af37" metalness={0.8} roughness={0.2} />
+                </mesh>
+                {/* Gold Pole */}
+                <mesh position={[0, roomH * 0.4, 0]}>
+                    <cylinderGeometry args={[0.02, 0.02, roomH * 0.8, 16]} />
+                    <meshStandardMaterial color="#d4af37" metalness={0.8} roughness={0.2} />
+                </mesh>
+                {/* Elegant Shade */}
+                <mesh position={[0, roomH * 0.8, 0]}>
+                    <cylinderGeometry args={[0.2, 0.1, 0.3, 32, 1, true]} />
+                    <meshStandardMaterial color="#fff8e1" transparent opacity={0.8} side={THREE.DoubleSide} />
+                </mesh>
+                {/* Dynamic light */}
+                <pointLight position={[0, roomH * 0.75, 0]} intensity={lightIntensity} color="#fff8e1" distance={12} decay={2} />
+            </group>
+        </group>
+    );
+};
+
+// --- Standard Fixtures Removed Duplicate ---
+
+
+const RoomScene = ({ setup, floorTile, walls, setSceneInfo, timeOfDay, isWalkMode }) => {
     const { camera } = useThree();
     const controlsRef = useRef();
 
@@ -391,16 +633,52 @@ const RoomScene = ({ setup, floorTile, walls, setSceneInfo }) => {
     const roomW = Math.max(1, setup.width) * SCALE_FT;
     const roomL = Math.max(1, setup.length) * SCALE_FT;
     const roomH = Math.max(1, setup.height) * SCALE_FT;
+    const eyeLevel = roomH * 0.55; // Approx eye level related to ceiling
+
+    // Check if Luxury Model
+    const isLuxury = setup.model === 'Luxury Room';
+
+    // Day/Night Logic
+    // Time: 0 to 24.
+    // Day: 6 to 18. Peak sun at 12.
+    // Night: 18 to 6.
+
+    // Sun Angle: (time - 6) / 12 * PI for day.
+    const isDay = timeOfDay > 5 && timeOfDay < 19;
+
+    // Sun Position (moves East to West)
+    const sunAngle = ((timeOfDay - 6) / 12) * Math.PI;
+    const sunX = Math.cos(sunAngle) * roomW * 2;
+    const sunY = Math.sin(sunAngle) * roomH * 3;
+
+    // Intensities
+    // Sun: smooth curve during day, 0 at night
+    const sunIntensity = isDay ? Math.sin(sunAngle) * 1.0 : 0;
+
+    // Ambient: Bright at day, dim blue at night
+    const ambientIntensity = isDay ? 0.5 : 0.1;
+    const ambientColor = isDay ? 0xffffff : 0x1a237e; // White vs Midnight Blue
+
+    // Indoor: On at night, off/low at day.
+    // Smooth transition around dusk/dawn? Let's just say if Sun < 0.3, lights come on.
+    const indoorIntensity = sunIntensity < 0.2 ? 0.8 : 0;
 
     useEffect(() => {
-        const diag = Math.max(roomW, roomL) * 1.8;
-        camera.position.set(diag, roomH * 1.2 + 0.2, diag);
-        camera.lookAt(0, roomH * 0.45, 0);
-        if (controlsRef.current) {
-            controlsRef.current.target.set(0, roomH * 0.45, 0);
-            controlsRef.current.update();
+        if (isWalkMode) {
+            // Enter walk mode: set camera to inside room
+            camera.position.set(0, eyeLevel, roomL * 0.4);
+            camera.lookAt(0, eyeLevel, -roomL * 0.4);
+        } else {
+            // Reset to Orbit view
+            const diag = Math.max(roomW, roomL) * 1.8;
+            camera.position.set(diag, roomH * 1.2 + 0.2, diag);
+            camera.lookAt(0, roomH * 0.45, 0);
+            if (controlsRef.current) {
+                controlsRef.current.target.set(0, roomH * 0.45, 0);
+                controlsRef.current.update();
+            }
         }
-    }, [roomW, roomL, roomH, camera]);
+    }, [roomW, roomL, roomH, camera, isWalkMode, eyeLevel]);
 
     useEffect(() => {
         if (setSceneInfo) {
@@ -425,21 +703,21 @@ const RoomScene = ({ setup, floorTile, walls, setSceneInfo }) => {
         const length = roomL;
         if (floorTile && floorTile.image) {
             return <SmartTexturedMesh
-                size={[width, length]} // Plane geometry uses X, Y (which is Z in 3D)
-                position={[0, 0, 0]} // Rotation applied in parent
+                size={[width, length, 0.02]} // Added thickness to BoxGeometry to prevent default depth
+                position={[0, 0, 0]}
                 rotation={[-Math.PI / 2, 0, 0]}
                 imageUrl={floorTile.image}
-                faceDimensions={[setup.width, setup.length]} // Raw ft for repeat calc
-                scaleFt={1} // We passed raw ft above, so scale is 1
+                faceDimensions={[setup.width, setup.length]}
+                scaleFt={1}
             />;
-            // Wait, previous logic was: width / 3. 
+            // Wait, previous logic was: width / 3.
             // My Smart helper takes dimension and divides by (3 * scaleFt).
             // If I pass setup.width (15) and scaleFt=1 => 15 / 3 = 5 repeats. Correct.
         }
         return (
             <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
                 <planeGeometry args={[width, length]} />
-                <meshStandardMaterial color={0xdbc3a2} roughness={0.95} />
+                <meshStandardMaterial color={isLuxury ? 0xf5f5f5 : 0xdbc3a2} roughness={isLuxury ? 0.3 : 0.95} metalness={isLuxury ? 0.1 : 0} />
             </mesh>
         );
     };
@@ -464,28 +742,29 @@ const RoomScene = ({ setup, floorTile, walls, setSceneInfo }) => {
                 scaleFt={1}
             />
         }
-        return <PlainMesh size={size} position={position} rotation={rotation} />;
+        return <PlainMesh size={size} position={position} rotation={rotation} color={isLuxury ? 0xffffff : 0xf2efe8} />;
     };
 
     return (
         <>
-            <ambientLight intensity={0.5} />
-            <hemisphereLight args={[0xffffff, 0x888888, 0.9]} position={[0, roomH * 3, 0]} />
-            <directionalLight position={[-roomW * 1.3, roomH * 2, roomL * 1.3]} intensity={0.6} castShadow />
+            {/* Dynamic Lighting System */}
+            <ambientLight intensity={ambientIntensity} color={ambientColor} />
+
+            {/* Sun / Moon Directional Light */}
+            <directionalLight
+                position={[sunX, sunY, 5]}
+                intensity={sunIntensity}
+                color={isDay ? 0xfffae6 : 0xaab6fe}
+                castShadow
+            />
+
+            {/* Luxury Ambiance - Indoor Lights (Controlled by Day/Night) */}
+            {/* We moved the point light into LuxuryFixtures to be dynamic, OR we keep a general one here */}
+            {/* For non-luxury models, maybe we want a basic bulb? No, stick to luxury requirement. */}
 
             <group>
                 {/* Floor - Special case for geometry */}
-                {floorTile && floorTile.image ? (
-                    <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-                        <planeGeometry args={[roomW, roomL]} />
-                        <SmartTexturedMeshContent imageUrl={floorTile.image} w={setup.width} h={setup.length} />
-                    </mesh>
-                ) : (
-                    <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-                        <planeGeometry args={[roomW, roomL]} />
-                        <meshStandardMaterial color={0xdbc3a2} roughness={0.95} />
-                    </mesh>
-                )}
+                <RenderFloor />
 
                 {/* Back Wall */}
                 <RenderWall
@@ -538,6 +817,13 @@ const RoomScene = ({ setup, floorTile, walls, setSceneInfo }) => {
                     <ParkingFeatures roomW={roomW} roomL={roomL} roomH={roomH} />
                 )}
 
+                {/* Fixtures based on Model */}
+                {isLuxury ? (
+                    <LuxuryFixtures roomW={roomW} roomL={roomL} roomH={roomH} lightIntensity={indoorIntensity} />
+                ) : (
+                    <StandardFixtures roomW={roomW} roomL={roomL} roomH={roomH} lightIntensity={indoorIntensity} />
+                )}
+
                 {/* Grid Helper */}
                 <gridHelper args={[Math.max(roomW, roomL) * 1.2, 10, 0xdddddd, 0xeeeeee]} position={[0, 0.001, 0]} />
             </group>
@@ -549,7 +835,14 @@ const RoomScene = ({ setup, floorTile, walls, setSceneInfo }) => {
                 maxDistance={Math.max(roomW, roomL) * 6}
                 enableDamping={true}
                 dampingFactor={0.08}
+                enabled={!isWalkMode}
             />
+            {isWalkMode && (
+                <>
+                    <PointerLockControls selector="#viewerWrap" />
+                    <WalkManager active={isWalkMode} eyeLevel={eyeLevel} />
+                </>
+            )}
         </>
     );
 };
@@ -642,6 +935,9 @@ const AiGeneration = () => {
     const [setup, setSetup] = useState({ width: 15, length: 20, height: 9, area: 300, roomType: 'Living Room', model: 'Normal Room' });
     const [sceneInfo, setSceneInfo] = useState(null);
 
+    // Day/Night State
+    const [timeOfDay, setTimeOfDay] = useState(12); // 0 to 24
+
     // Tiles
     const [showPicker, setShowPicker] = useState(false);
     const [pickerType, setPickerType] = useState('floor');
@@ -654,6 +950,10 @@ const AiGeneration = () => {
     // Modal State
     const [pendingWallTile, setPendingWallTile] = useState(null);
     const [showWallModal, setShowWallModal] = useState(false);
+
+    // Premium Features
+    const [isWalkMode, setIsWalkMode] = useState(false);
+    const isLuxury = setup.model === 'Luxury Room';
 
     useEffect(() => {
         try {
@@ -706,6 +1006,22 @@ const AiGeneration = () => {
             viewerRef.current.requestFullscreen().catch(err => console.error(err));
         } else {
             document.exitFullscreen();
+        }
+    };
+
+    const handleSnapshot = () => {
+        const canvas = document.querySelector('canvas');
+        if (canvas) {
+            // Temporarily render to ensure buffer is fresh (though preserveDrawingBuffer helps)
+            try {
+                const data = canvas.toDataURL('image/png');
+                const link = document.createElement('a');
+                link.download = `JTT-Design-${new Date().toISOString().slice(0, 10)}.png`;
+                link.href = data;
+                link.click();
+            } catch (err) {
+                console.error("Snapshot failed:", err);
+            }
         }
     };
 
@@ -773,25 +1089,80 @@ const AiGeneration = () => {
                         {/* LEFT: 3D Viewer */}
                         <section className="card large" style={{ position: 'relative', overflow: 'hidden', padding: 0 }}>
                             <div id="viewerWrap" ref={viewerRef} className="viewer-wrap" style={{ width: '100%', height: '500px' }}>
-                                <Canvas shadows>
+                                <Canvas shadows gl={{ preserveDrawingBuffer: true }}>
                                     <Suspense fallback={<Html center>Loading 3D...</Html>}>
                                         <RoomScene
                                             setup={setup}
                                             floorTile={floorTile}
                                             walls={walls}
                                             setSceneInfo={setSceneInfo}
+                                            timeOfDay={timeOfDay}
+                                            isWalkMode={isWalkMode}
                                         />
                                     </Suspense>
                                 </Canvas>
 
-                                <div className="controls-top">
+                                <div className="controls-top" style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+
+                                    {/* Day/Night Slider */}
+                                    <div className="time-control" style={{
+                                        background: 'rgba(255,255,255,0.9)',
+                                        padding: '4px 12px',
+                                        borderRadius: '20px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '8px',
+                                        boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                                    }}>
+                                        <span style={{ fontSize: '12px', fontWeight: '600' }}>
+                                            {timeOfDay < 6 ? 'Night' : timeOfDay < 18 ? 'Day' : 'Night'}
+                                        </span>
+                                        <input
+                                            type="range"
+                                            min="0"
+                                            max="24"
+                                            step="0.5"
+                                            value={timeOfDay}
+                                            onChange={(e) => setTimeOfDay(parseFloat(e.target.value))}
+                                            style={{ width: '80px', cursor: 'grab' }}
+                                            title={`Time: ${Math.floor(timeOfDay)}:00`}
+                                        />
+                                    </div>
+
                                     <button className="control-btn" onClick={() => handleResetDesign()}>
                                         <RotateCcw size={14} style={{ marginRight: 4 }} /> Reset
                                     </button>
                                     <button className="control-btn" onClick={() => handleFullscreen()}>
                                         <Maximize size={14} style={{ marginRight: 4 }} /> Full Screen
                                     </button>
+
+                                    <>
+                                        <div style={{ width: '1px', height: '20px', background: '#ccc', margin: '0 4px' }}></div>
+                                        <button
+                                            className={`control-btn ${isWalkMode ? 'active-mode' : ''}`}
+                                            onClick={() => setIsWalkMode(!isWalkMode)}
+                                            title="Virtual Walkthrough"
+                                        >
+                                            <Footprints size={14} style={{ marginRight: 4 }} /> {isWalkMode ? 'Exit Walk' : 'Walk'}
+                                        </button>
+                                        <button
+                                            className="control-btn"
+                                            onClick={handleSnapshot}
+                                            title="Take Snapshot"
+                                        >
+                                            <Camera size={14} style={{ marginRight: 4 }} /> Snap
+                                        </button>
+                                    </>
                                 </div>
+                                {isWalkMode && (
+                                    <div style={{
+                                        position: 'absolute', top: '70px', left: '50%', transform: 'translateX(-50%)',
+                                        background: 'rgba(0,0,0,0.6)', color: 'white', padding: '8px 16px', borderRadius: '20px',
+                                        zIndex: 20, fontSize: '0.9rem', pointerEvents: 'none'
+                                    }}>
+                                        Move: W A S D • Look: Mouse • Click to start • ESC to show cursor
+                                    </div>
+                                )}
 
                                 <div className="info-bottom">
                                     <div className="interactive">Interactive Controls

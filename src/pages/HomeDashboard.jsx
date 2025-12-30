@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/dashboard.css';
-import { Star, FileText, Layers, Award, Bot, User, Lock, ArrowRight } from 'lucide-react';
+import { Star, FileText, Layers, Award, Bot, User, Lock, ArrowRight, LayoutDashboard } from 'lucide-react';
 
 const HomeDashboard = () => {
     const navigate = useNavigate();
@@ -115,7 +115,6 @@ const HomeDashboard = () => {
                     <p className="section-sub muted">Select the service that best fits your needs. You can always switch between services during your session.</p>
 
                     <section className="services-row">
-                        {/* Tile Visualization */}
                         <article className="service card gradient-green">
                             <div className="service-icon"><Star size={24} /></div>
                             <h4>Tile Visualization</h4>
@@ -129,7 +128,6 @@ const HomeDashboard = () => {
                             <button className="btn-primary-outline" onClick={() => navigate('/room-setup')}>Get Started <ArrowRight size={16} /></button>
                         </article>
 
-                        {/* Cost Estimation */}
                         <article className="service card gradient-brown">
                             <div className="service-icon"><FileText size={24} /></div>
                             <h4>Cost Estimation</h4>
@@ -154,7 +152,21 @@ const HomeDashboard = () => {
                                 <li>Filter by size, color, finish</li>
                                 <li>Add to favorite list</li>
                             </ul>
-                            <button className="btn-primary-outline" onClick={() => navigate('/collection')}>Explore <ArrowRight size={16} /></button>
+                            <button className="btn-primary-outline" onClick={() => navigate('/collection')}>Get Started <ArrowRight size={16} /></button>
+                        </article>
+
+                        {/* Dashboard / Review */}
+                        <article className="service card gradient-purple">
+                            <div className="service-icon"><LayoutDashboard size={24} /></div>
+                            <h4>Dashboard</h4>
+                            <p className="muted">Review your saved estimates, project details, and track your renovation progress in one place.</p>
+                            <ul className="features muted">
+                                <li>View saved estimates</li>
+                                <li>Project tracking</li>
+                                <li>Review history</li>
+                                <li>Status updates</li>
+                            </ul>
+                            <button className="btn-primary-outline" onClick={() => navigate('/review')}>Get Started <ArrowRight size={16} /></button>
                         </article>
                     </section>
 

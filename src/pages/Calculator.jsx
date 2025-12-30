@@ -135,12 +135,10 @@ const Calculator = () => {
         setRoomsData({ ...roomsData, [area]: rooms });
     }
 
-    // Calculation Logic
-    const calculateRoom = (area, roomIndex) => {
-        const room = roomsData[area][roomIndex];
+    // Unified Calculation Logic
+    const computeRoomResults = (room) => {
         let totalCost = 0, totalWeight = 0, totalArea = 0;
         let output = [];
-        // We need detailed data for the UI
 
         const calculateType = (type) => {
             const inp = room.inputs[type];
@@ -278,23 +276,38 @@ const Calculator = () => {
             calculateType(key);
         });
 
+        return { output, totalCost, totalWeight, totalArea };
+    };
+
+    const calculateRoom = (area, roomIndex) => {
+        const room = roomsData[area][roomIndex];
+        const results = computeRoomResults(room);
+
         const newRooms = [...roomsData[area]];
-        newRooms[roomIndex] = { ...room, results: { output, totalCost, totalWeight, totalArea } };
+        newRooms[roomIndex] = { ...room, results };
         setRoomsData({ ...roomsData, [area]: newRooms });
     };
 
     const calculateGrandSummary = async () => {
+        // 1. Recalculate ALL rooms to ensure data is fresh and complete
+        const updatedRoomsData = { ...roomsData };
         let gArea = 0, gCost = 0, gWeight = 0;
 
-        Object.keys(roomsData).forEach(area => {
-            roomsData[area].forEach(room => {
-                if (room.results) {
-                    gArea += room.results.totalArea;
-                    gCost += room.results.totalCost;
-                    gWeight += room.results.totalWeight;
-                }
+        Object.keys(updatedRoomsData).forEach(area => {
+            updatedRoomsData[area] = updatedRoomsData[area].map(room => {
+                const results = computeRoomResults(room); // Use the unified calculation
+
+                // Aggregate totals
+                gArea += results.totalArea;
+                gCost += results.totalCost;
+                gWeight += results.totalWeight;
+
+                return { ...room, results };
             });
         });
+
+        // 2. Update State with fresh calculations
+        setRoomsData(updatedRoomsData);
 
         const loadingCharges = Math.ceil((gWeight * 0.25) / 10) * 10;
         const totalAmount = Math.round(gCost + loadingCharges);
@@ -309,13 +322,14 @@ const Calculator = () => {
 
         // --- Save Customer Data to Backend ---
         const customer = JSON.parse(sessionStorage.getItem('customer'));
-        // Check if we have customer data and if we haven't already saved it IN THIS SESSION logic
-        if (customer && !customer.isSaved) {
+
+        // Always save if customer exists. Removed !customer.isSaved check to allow updates/re-saves.
+        if (customer) {
             try {
-                // Prepare Rooms Data
+                // Prepare Rooms Data from the UPDATED local variable
                 const roomsPayload = [];
-                Object.keys(roomsData).forEach(area => {
-                    roomsData[area].forEach(room => {
+                Object.keys(updatedRoomsData).forEach(area => {
+                    updatedRoomsData[area].forEach(room => {
                         if (room.results) {
                             const items = room.results.output.map(res => ({
                                 type: res.type,
@@ -325,7 +339,12 @@ const Calculator = () => {
                                 price: res.price,
                                 cost: res.cost,
                                 weight: res.weight,
-                                description: res.dimensions || ''
+                                description: res.dimensions || '',
+                                darkBoxes: res.darkBoxes || 0,
+                                lightBoxes: res.lightBoxes || 0,
+                                highlightBoxes: res.highlightBoxes || 0,
+                                tilesPerWidth: res.tilesPerWidth || 0,
+                                tilesPerLength: res.tilesPerLength || 0
                             }));
 
                             roomsPayload.push({
@@ -340,7 +359,6 @@ const Calculator = () => {
                     });
                 });
 
-                // Ensure we send fresh payload without isSaved flag
                 const payload = {
                     fullname: customer.fullname,
                     phone: customer.phone,
@@ -350,6 +368,8 @@ const Calculator = () => {
                     totalAmount: totalAmount,
                     totalArea: gArea,
                     totalWeight: gWeight,
+                    loadingCharges: loadingCharges,
+                    totalTileCost: gCost,
                     rooms: roomsPayload
                 };
 
@@ -361,15 +381,21 @@ const Calculator = () => {
 
                 if (response.ok) {
                     console.log('Customer saved to backend successfully.');
-                    alert('Customer details saved to backend!');
-                    // Mark as saved so we don't duplicate on repeated clicks
+                    alert('Customer details and estimation saved successfully!');
+
+                    // Update session storage to reflect saved state if needed, 
+                    // though we allowed re-saving now.
                     customer.isSaved = true;
                     sessionStorage.setItem('customer', JSON.stringify(customer));
+
                 } else {
-                    console.error('Failed to save customer backend.');
+                    const errorData = await response.json();
+                    console.error('Failed to save customer backend:', errorData);
+                    alert(`Failed to save: ${errorData.error || 'Unknown server error'}`);
                 }
             } catch (err) {
                 console.error('Error saving customer:', err);
+                alert('Error connecting to server to save details.');
             }
         }
 
@@ -653,6 +679,7 @@ const Calculator = () => {
                                         </div>
                                     )}
 
+                                    {/* button updated to just trigger UI update, though final summary does it too */}
                                     <button style={{ marginTop: '10px' }} onClick={() => calculateRoom(area, idx)}>📋 Calculate {room.name}</button>
 
                                     {/* Updated Result Display to matching Image 1 */}

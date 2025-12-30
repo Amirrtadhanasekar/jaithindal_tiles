@@ -9,6 +9,7 @@ import Calculator from './pages/Calculator';
 import RoomSetup from './pages/RoomSetup';
 import TileCollection from './pages/TileCollection';
 import AiGeneration from './pages/AiGeneration';
+import Review from './pages/Review';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/room-setup" element={<RoomSetup />} />
         <Route path="/collection" element={<TileCollection />} />
         <Route path="/ai" element={<AiGeneration />} />
+        <Route path="/review" element={<Review />} />
       </Routes>
     </Router>
   );
