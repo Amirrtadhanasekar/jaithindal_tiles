@@ -136,6 +136,8 @@ const Calculator = () => {
     }
 
     // Unified Calculation Logic
+
+    // Unified Calculation Logic
     const computeRoomResults = (room) => {
         let totalCost = 0, totalWeight = 0, totalArea = 0;
         let output = [];

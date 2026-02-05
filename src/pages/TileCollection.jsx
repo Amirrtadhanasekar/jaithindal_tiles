@@ -17,16 +17,26 @@ const TileCollection = () => {
     // Collections State
     const [floorTiles, setFloorTiles] = useState([]);
     const [wallTiles, setWallTiles] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         loadTiles();
     }, []);
 
-    const loadTiles = () => {
-        const fTiles = JSON.parse(localStorage.getItem('floor')) || [];
-        const wTiles = JSON.parse(localStorage.getItem('wall')) || [];
-        setFloorTiles(fTiles);
-        setWallTiles(wTiles);
+    const loadTiles = async () => {
+        try {
+            const response = await fetch('http://localhost:5000/api/products');
+            if (response.ok) {
+                const data = await response.json();
+                // Filter into existing structure
+                setFloorTiles(data.filter(p => p.type === 'floor'));
+                setWallTiles(data.filter(p => p.type === 'wall'));
+            } else {
+                console.error("Failed to fetch products");
+            }
+        } catch (error) {
+            console.error("Error loading products:", error);
+        }
     };
 
     const handleImageChange = (e) => {
@@ -41,29 +51,45 @@ const TileCollection = () => {
         }
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
         if (!imagePreview || !tileSize || !designNumber || !tileAmount) {
             alert("Please fill all fields!");
             return;
         }
 
+        setLoading(true);
+
         const newTile = {
+            id: Date.now(),
+            type: tileType,
             image: imagePreview,
             size: tileSize,
             design: designNumber,
-            amount: tileAmount,
-            id: Date.now()
+            amount: parseFloat(tileAmount)
         };
 
-        const key = tileType; // 'floor' or 'wall'
-        const currentTiles = JSON.parse(localStorage.getItem(key)) || [];
-        currentTiles.push(newTile);
+        try {
+            const response = await fetch('http://localhost:5000/api/products', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(newTile)
+            });
 
-        localStorage.setItem(key, JSON.stringify(currentTiles));
-
-        alert("Tile saved successfully!");
-        handleClear();
-        loadTiles();
+            if (response.ok) {
+                alert("Tile saved successfully!");
+                handleClear();
+                loadTiles(); // Reload from server
+            } else {
+                alert("Failed to save tile to server.");
+            }
+        } catch (error) {
+            console.error("Error saving tile:", error);
+            alert("Error saving tile.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleClear = () => {
@@ -75,14 +101,22 @@ const TileCollection = () => {
         setTileType('floor');
     };
 
-    const handleDelete = (type, index) => {
+    const handleDelete = async (id) => {
         if (!window.confirm("Are you sure you want to delete this tile?")) return;
 
-        const key = type;
-        const currentTiles = JSON.parse(localStorage.getItem(key)) || [];
-        currentTiles.splice(index, 1);
-        localStorage.setItem(key, JSON.stringify(currentTiles));
-        loadTiles();
+        try {
+            const response = await fetch(`http://localhost:5000/api/products/${id}`, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                loadTiles(); // Reload from server
+            } else {
+                alert("Failed to delete tile.");
+            }
+        } catch (error) {
+            console.error("Error deleting tile:", error);
+        }
     };
 
     return (
@@ -159,7 +193,10 @@ const TileCollection = () => {
 
                     <div className="action-row">
                         <button className="btn-outline" onClick={handleClear}>Reset</button>
-                        <button className="btn-primary" onClick={handleSave}><Plus size={16} style={{ marginRight: '6px' }} /> Save Tile</button>
+                        <button className="btn-primary" onClick={handleSave} disabled={loading}>
+                            <Plus size={16} style={{ marginRight: '6px' }} />
+                            {loading ? 'Saving...' : 'Save Tile'}
+                        </button>
                     </div>
                 </section>
 
@@ -171,17 +208,17 @@ const TileCollection = () => {
                 </div>
 
                 {floorTiles.length === 0 ? (
-                    <div className="muted" style={{ textAlign: 'center', padding: '20px' }}>No floor tiles found in collection.</div>
+                    <div className="muted" style={{ textAlign: 'center', padding: '20px' }}>No floor tiles found in server collection.</div>
                 ) : (
                     <div className="collections-grid">
                         {floorTiles.map((tile, idx) => (
-                            <div key={idx} className="tile-card">
+                            <div key={tile.id || idx} className="tile-card">
                                 <img src={tile.image} alt={tile.design} className="tile-img" />
                                 <div className="tile-info">
                                     <h4>{tile.design}</h4>
                                     <div className="tile-meta">Size: {tile.size}</div>
                                     <div className="tile-meta">Price: ₹{tile.amount}</div>
-                                    <button className="delete-btn" onClick={() => handleDelete('floor', idx)}>
+                                    <button className="delete-btn" onClick={() => handleDelete(tile.id)}>
                                         <Trash2 size={14} /> Delete
                                     </button>
                                 </div>
@@ -198,17 +235,17 @@ const TileCollection = () => {
                 </div>
 
                 {wallTiles.length === 0 ? (
-                    <div className="muted" style={{ textAlign: 'center', padding: '20px' }}>No wall tiles found in collection.</div>
+                    <div className="muted" style={{ textAlign: 'center', padding: '20px' }}>No wall tiles found in server collection.</div>
                 ) : (
                     <div className="collections-grid">
                         {wallTiles.map((tile, idx) => (
-                            <div key={idx} className="tile-card">
+                            <div key={tile.id || idx} className="tile-card">
                                 <img src={tile.image} alt={tile.design} className="tile-img" />
                                 <div className="tile-info">
                                     <h4>{tile.design}</h4>
                                     <div className="tile-meta">Size: {tile.size}</div>
                                     <div className="tile-meta">Price: ₹{tile.amount}</div>
-                                    <button className="delete-btn" onClick={() => handleDelete('wall', idx)}>
+                                    <button className="delete-btn" onClick={() => handleDelete(tile.id)}>
                                         <Trash2 size={14} /> Delete
                                     </button>
                                 </div>

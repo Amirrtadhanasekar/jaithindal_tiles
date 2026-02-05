@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Sequence Diagrams - Jai Thindal Tiles</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .diagram-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 40px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Technology Stack Table Theme */
+        .tech-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            margin-top: 10px;
+        }
+
+        .tech-table th {
+            background-color: #e9ecef;
+            /* Light grey header like image */
+            color: #495057;
+            font-weight: 600;
+            text-align: left;
+            padding: 15px 20px;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .tech-table td {
+            padding: 15px 20px;
+            border-bottom: 1px solid #dee2e6;
+            color: #333;
+            font-size: 15px;
+        }
+
+        .tech-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>System Design Diagrams</h1>
+
+    <!-- SECTION: USE CASE DIAGRAMS -->
+    <h2 style="margin-top: 40px; color: #4a148c;">Module Use Case Diagrams</h2>
+    <p style="color: #666; margin-bottom: 20px;">Use Case diagrams representing the core functionalities for each
+        module.</p>
+
+    <!-- 1. TILE VISUALIZATION USE CASE -->
+    <div class="diagram-container">
+        <h3>1. Visualization Module (Use Case)</h3>
+        <div class="mermaid">
+            graph LR
+            %% GLOBAL STYLES matches the user's theme
+            classDef actorStyle fill:#FFFFFF,stroke:#000000,stroke-width:2px,rx:0,ry:0;
+            classDef usecaseStyle fill:#E1D5F5,stroke:#7B68EE,stroke-width:2px,rx:20,ry:20;
+
+            %% ACTOR
+            User[Customer]:::actorStyle
+
+            %% SYSTEM BOUNDARY
+            subgraph "Visualization Module"
+            direction TB
+            U1(Select Room Type):::usecaseStyle
+            U2(View 3D Room Models):::usecaseStyle
+            U3(Apply Floor Tiles):::usecaseStyle
+            U4(Apply Wall Tiles):::usecaseStyle
+            U5(Reset Design):::usecaseStyle
+            U6(Save Configuration):::usecaseStyle
+            end
+
+            %% RELATIONS
+            User --> U1
+            User --> U2
+            User --> U3
+            User --> U4
+            User --> U5
+            User --> U6
+        </div>
+    </div>
+
+    <!-- 2. COST ESTIMATION USE CASE -->
+    <div class="diagram-container">
+        <h3>2. Cost Estimation Module (Use Case)</h3>
+        <div class="mermaid">
+            graph LR
+            %% STYLES
+            classDef actorStyle fill:#FFFFFF,stroke:#000000,stroke-width:2px,rx:0,ry:0;
+            classDef usecaseStyle fill:#E1D5F5,stroke:#7B68EE,stroke-width:2px,rx:20,ry:20;
+
+            %% ACTOR
+            User[Customer]:::actorStyle
+
+            %% SYSTEM BOUNDARY
+            subgraph "Cost Estimator"
+            direction TB
+            C1(Enter Room Dimensions):::usecaseStyle
+            C2(Select Tile Category):::usecaseStyle
+            C3(Calculate Requirements):::usecaseStyle
+            C4(View Cost Breakdown):::usecaseStyle
+            C5(Print Estimation):::usecaseStyle
+            C6(Save Estimate):::usecaseStyle
+            end
+
+            %% RELATIONS
+            User --> C1
+            User --> C2
+            User --> C3
+            User --> C4
+            User --> C5
+            User --> C6
+        </div>
+    </div>
+
+    <!-- 3. TILE ADMIN UPLOAD USE CASE -->
+    <div class="diagram-container">
+        <h3>3. Admin Tile Management (Use Case)</h3>
+        <div class="mermaid">
+            graph LR
+            %% STYLES
+            classDef actorStyle fill:#FFFFFF,stroke:#000000,stroke-width:2px,rx:0,ry:0;
+            classDef usecaseStyle fill:#E1D5F5,stroke:#7B68EE,stroke-width:2px,rx:20,ry:20;
+
+            %% ACTOR
+            Admin[Administrator]:::actorStyle
+
+            %% SYSTEM BOUNDARY
+            subgraph "Tile Administration"
+            direction TB
+            A1(Admin Login):::usecaseStyle
+            A2(View Collections):::usecaseStyle
+            A3(Upload New Tile):::usecaseStyle
+            A4(Set Tile Price):::usecaseStyle
+            A5(Delete Tile):::usecaseStyle
+            end
+
+            %% RELATIONS
+            Admin --> A1
+            Admin --> A2
+            Admin --> A3
+            Admin --> A4
+            Admin --> A5
+        </div>
+    </div>
+
+    <!-- 4. DASHBOARD USE CASE -->
+    <div class="diagram-container">
+        <h3>4. Dashboard & Analytics (Use Case)</h3>
+        <div class="mermaid">
+            graph LR
+            %% STYLES
+            classDef actorStyle fill:#FFFFFF,stroke:#000000,stroke-width:2px,rx:0,ry:0;
+            classDef usecaseStyle fill:#E1D5F5,stroke:#7B68EE,stroke-width:2px,rx:20,ry:20;
+
+            %% ACTOR
+            Admin[Administrator]:::actorStyle
+
+            %% SYSTEM BOUNDARY
+            subgraph "Analytics Dashboard"
+            direction TB
+            D1(View Overall Sales):::usecaseStyle
+            D2(Track Visitor Stats):::usecaseStyle
+            D3(Manage User Accounts):::usecaseStyle
+            D4(Generate Reports):::usecaseStyle
+            D5(System Settings):::usecaseStyle
+            end
+
+            %% RELATIONS
+            Admin --> D1
+            Admin --> D2
+            Admin --> D3
+            Admin --> D4
+            Admin --> D5
+        </div>
+    </div>
+
+    <!-- 5. DATA FLOW DIAGRAM LEVEL 0 -->
+    <div class="diagram-container">
+        <h3>5. Data Flow Diagram (Level 0)</h3>
+        <div class="mermaid">
+            graph LR
+            %% STYLES: Matches Reference (White Box, Black Border)
+            classDef entityStyle fill:#FFFFFF,stroke:#000000,stroke-width:2px;
+            classDef processStyle fill:#FFFFFF,stroke:#000000,stroke-width:2px;
+
+            %% ENTITIES
+            Admin[Administrator]:::entityStyle
+            Customer[Customer]:::entityStyle
+
+            %% CENTRAL PROCESS (Circle)
+            System((Jaithindal<br />Tiles System)):::processStyle
+
+            %% DATA FLOWS: ADMIN -> SYSTEM
+            Admin -->|Login Credentials| System
+            Admin -->|New Tile Data| System
+            Admin -->|System Updates| System
+
+            %% DATA FLOWS: SYSTEM -> ADMIN
+            System -->|Sales Reports| Admin
+            System -->|User Analytics| Admin
+            System -->|Inventory Alerts| Admin
+
+            %% DATA FLOWS: CUSTOMER -> SYSTEM
+            Customer -->|Room Dimensions| System
+            Customer -->|Tile Selection| System
+            Customer -->|Estimate Request| System
+
+            %% DATA FLOWS: SYSTEM -> CUSTOMER
+            System -->|3D Visualization| Customer
+            System -->|Cost Estimate| Customer
+            System -->|Design Config| Customer
+        </div>
+    </div>
+
+    <!-- 6. DATA FLOW DIAGRAM LEVEL 1 -->
+    <div class="diagram-container">
+        <h3>6. Data Flow Diagram (Level 1)</h3>
+        <div class="mermaid">
+            graph TD
+            %% STYLES: Matching Reference (Top-Down, Circles for Processes, Cylinders for DB)
+            classDef entityStyle fill:#FFFFFF,stroke:#000000,stroke-width:2px;
+            classDef processStyle fill:#FFFFFF,stroke:#000000,stroke-width:2px;
+            classDef storeStyle fill:#FFFFFF,stroke:#000000,stroke-width:2px;
+
+            %% ENTITIES (TOP LEVEL)
+            Admin[Administrator]:::entityStyle
+            Customer[Customer]:::entityStyle
+
+            %% PROCESSES (MIDDLE LEVEL)
+            P1((1.0 Auth)):::processStyle
+            P2((2.0 Visualization)):::processStyle
+            P3((3.0 Estimation)):::processStyle
+            P4((4.0 Inventory)):::processStyle
+
+            %% DATA STORES (BOTTOM LEVEL)
+            D1[(D1 Users)]:::storeStyle
+            D2[(D2 Designs)]:::storeStyle
+            D3[(D3 Estimates)]:::storeStyle
+            D4[(D4 Products)]:::storeStyle
+
+            %% --- FLOWS: AUTHENTICATION (1.0) ---
+            Admin -->|Credentials| P1
+            Customer -->|Login/Register| P1
+            P1 <-->|Verify/Read| D1
+
+                %% --- FLOWS: INVENTORY & ADMIN (4.0) ---
+                Admin -->|Upload/Update| P4
+                P4 -->|Save Data| D4
+                P4 -->|Stock Reports| Admin
+
+                %% --- FLOWS: VISUALIZATION (2.0) ---
+                Customer -->|Select Room| P2
+                D4 -.->|Fetch Tiles| P2
+                P2 -->|Save Config| D2
+                D2 -->|Load Design| P2
+
+                %% --- FLOWS: ESTIMATION (3.0) ---
+                Customer -->|Input Dims| P3
+                D4 -.->|Get Prices| P3
+                P3 -->|Save Quote| D3
+                D3 -->|Order History| P3
+
+                %% ADMIN OVERSIGHT
+                D3 -.->|Sales Data| Admin
+        </div>
+    </div>
+
+    <!-- 7. ENTITY RELATIONSHIP DIAGRAM -->
+    <div class="diagram-container">
+        <h3>7. System Data Model (ER Diagram)</h3>
+        <div class="mermaid">
+            erDiagram
+            %% User & Admin
+            ADMIN_USER {
+            ObjectId _id PK
+            String username
+            String passwordHash
+            String role
+            Date createdAt
+            }
+
+            %% Customer & Estimation
+            CUSTOMER {
+            ObjectId _id PK
+            String name
+            String mobile
+            String address
+            String attenderName
+            Date registeredAt
+            }
+
+            ESTIMATION {
+            ObjectId _id PK
+            ObjectId customerId FK
+            Number grandTotal
+            Number loadingCharges
+            Number transportCost
+            String status
+            Date generatedAt
+            }
+
+            ESTIMATION_ITEM {
+            ObjectId _id PK
+            ObjectId estimationId FK
+            ObjectId tileId FK
+            String roomType
+            Number areaSqFt
+            Number boxesNeeded
+            Number totalCost
+            }
+
+            %% Product Catalog
+            TILE_PRODUCT {
+            ObjectId _id PK
+            String name
+            String category
+            String dimensions
+            Number pricePerBox
+            String imageUrl
+            Boolean inStock
+            }
+
+            %% Relationships
+            CUSTOMER ||--o{ ESTIMATION : "requests"
+            ESTIMATION ||--|{ ESTIMATION_ITEM : "contains"
+            TILE_PRODUCT ||--o{ ESTIMATION_ITEM : "referenced_in"
+            ADMIN_USER ||--o{ TILE_PRODUCT : "manages"
+        </div>
+    </div>
+
+    <!-- 8. TECHNOLOGY STACK -->
+    <div class="diagram-container">
+        <h3>8. Technology Stack</h3>
+        <table class="tech-table">
+            <thead>
+                <tr>
+                    <th>Component</th>
+                    <th>Technology</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Frontend</strong></td>
+                    <td>React.js, Vite, Context API</td>
+                </tr>
+                <tr>
+                    <td><strong>Backend</strong></td>
+                    <td>Node.js, Express.js (REST API)</td>
+                </tr>
+                <tr>
+                    <td><strong>Database</strong></td>
+                    <td>MongoDB (Mongoose ODM)</td>
+                </tr>
+                <tr>
+                    <td><strong>3D Engine</strong></td>
+                    <td>Three.js, React Three Fiber</td>
+                </tr>
+                <tr>
+                    <td><strong>Styling</strong></td>
+                    <td>CSS3 (Custom Theme), Responsive Design</td>
+                </tr>
+                <tr>
+                    <td><strong>Deployment</strong></td>
+                    <td>Vercel (Frontend), Render/Heroku (Backend)</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- SECTION: SEQUENCE DIAGRAMS -->
+    <h2 style="margin-top: 60px; color: #2e7d32;">Sequence Flow Diagrams</h2>
+    <p style="color: #666; margin-bottom: 20px;">Technical flow of data between system components.</p>
+
+    <!-- 1. VISUALIZATION MODULE -->
+    <div class="diagram-container">
+        <h2>1. Visualization Module Flow</h2>
+        <div class="mermaid">
+            sequenceDiagram
+            autonumber
+            actor User
+            participant UI as Frontend (RoomSetup.jsx)
+            participant 3D as 3D Engine (Three.js)
+            participant DB as Database
+
+            User->>UI: Select Room Type (e.g. Kitchen)
+            UI->>3D: LoadRoomModel(type)
+            3D-->>UI: Model Loaded
+
+            User->>UI: Select Tile (Floor or Wall)
+            UI->>3D: ApplyTexture(tileUrl)
+            3D-->>UI: Render Updated View
+
+            User->>UI: Click Save Design
+            UI->>DB: SaveDesignConfig(room, tiles)
+            DB-->>UI: Success (DesignSaved)
+            UI-->>User: Show Saved Notification
+        </div>
+    </div>
+
+    <!-- 2. ESTIMATION MODULE -->
+    <div class="diagram-container">
+        <h2>2. Estimation Module Flow</h2>
+        <div class="mermaid">
+            sequenceDiagram
+            autonumber
+            actor User
+            participant UI as Frontend (Calculator.jsx)
+            participant Logic as CostEngine
+            participant DB as Database
+
+            User->>UI: Enter Room Dimensions
+            User->>UI: Select Tile Type
+
+            UI->>Logic: CalculateQuantity(area, tileVar)
+            Logic->>Logic: Add Wastage (10%)
+            Logic-->>UI: Return Box Count and Cost
+
+            User->>UI: Click Save Estimate
+            UI->>DB: POST /api/estimates
+            DB-->>UI: 200 OK (Estimate ID)
+            UI-->>User: Display Final Quote
+        </div>
+    </div>
+
+    <!-- 3. DASHBOARD MODULE -->
+    <div class="diagram-container">
+        <h2>3. Dashboard Module Flow</h2>
+        <div class="mermaid">
+            sequenceDiagram
+            autonumber
+            actor Admin
+            participant UI as Frontend (HomeDashboard.jsx)
+            participant API as Backend API
+            participant DB as Database
+
+            Admin->>UI: Login and View Dashboard
+            UI->>API: GET /api/analytics/summary
+
+            API->>DB: Query Sales and Estimates
+            DB-->>API: Return Aggregated Data
+            API-->>UI: JSON Data
+
+            UI->>UI: Render Charts and KPI Cards
+            UI-->>Admin: Display Insights
+        </div>
+    </div>
+
+    <!-- 4. ADMIN MODULE -->
+    <div class="diagram-container">
+        <h2>4. Admin Module Flow</h2>
+        <div class="mermaid">
+            sequenceDiagram
+            autonumber
+            actor Admin
+            participant UI as Frontend (AdminPanel)
+            participant API as Backend API
+            participant DB as Database
+
+            %% Login
+            Admin->>UI: Enter Credentials
+            UI->>API: POST /api/auth/login
+            API->>DB: Validate User
+            DB-->>API: User Found (Role Admin)
+            API-->>UI: Return Auth Token
+
+            %% Tile Management
+            Admin->>UI: Upload New Tile (Image Price)
+            UI->>API: POST /api/tiles/add
+            API->>DB: Insert Tile Record
+            DB-->>API: Success
+            API-->>UI: Update Tile Grid
+
+            %% User Management
+            Admin->>UI: View User List
+            UI->>API: GET /api/users
+            API-->>UI: Return User Data
+        </div>
+    </div>
+
+
+
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#e1d5f5',  // Light Purple (Background)
+                primaryTextColor: '#000000',
+                primaryBorderColor: '#7b68ee', // Dark Purple (Border)
+                lineColor: '#5e35b1',
+                secondaryColor: '#ede7f6',
+                tertiaryColor: '#ffffff'
+            }
+        });
+    </script>
+</body>
+
+</html>

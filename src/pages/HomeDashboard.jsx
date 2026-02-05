@@ -168,6 +168,20 @@ const HomeDashboard = () => {
                             </ul>
                             <button className="btn-primary-outline" onClick={() => navigate('/review')}>Get Started <ArrowRight size={16} /></button>
                         </article>
+
+                        {/* AI Design Assistant */}
+                        <article className="service card gradient-blue">
+                            <div className="service-icon"><Bot size={24} /></div>
+                            <h4>AI Design Assistant</h4>
+                            <p className="muted">Let AI guide your choices. Match styles from photos, get intelligent tile pairings, and chat with our virtual design advisor.</p>
+                            <ul className="features muted">
+                                <li>Photo Style Matcher</li>
+                                <li>Intelligent Tile Pairing</li>
+                                <li>Design Chatbot</li>
+                                <li>Trend Recommendations</li>
+                            </ul>
+                            <button className="btn-primary-outline" onClick={() => navigate('/design-assistant')}>Get Started <ArrowRight size={16} /></button>
+                        </article>
                     </section>
 
                     <h3 className="section-title">Why Choose JAI THINDAL TILES?</h3>

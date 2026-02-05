@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Use Case Diagram</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+        }
+
+        .mermaid {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Overall System Use Case Diagram</h2>
+    <div class="mermaid">
+        useCaseDiagram
+        actor Customer
+        actor Admin
+
+        package System {
+        usecase "Visualize Room" as UC1
+        usecase "Select Tiles" as UC2
+        usecase "Calculate Cost" as UC3
+        usecase "Save Estimate" as UC4
+        usecase "View Dashboard" as UC5
+        usecase "Manage Inventory" as UC6
+        usecase "Manage Users" as UC7
+        usecase "Login" as UC8
+        }
+
+        Customer --> UC1
+        Customer --> UC2
+        Customer --> UC3
+        Customer --> UC4
+        Customer --> UC8
+
+        Admin --> UC5
+        Admin --> UC6
+        Admin --> UC7
+        Admin --> UC8
+    </div>
+
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true });
+    </script>
+</body>
+
+</html>

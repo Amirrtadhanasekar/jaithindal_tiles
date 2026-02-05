@@ -964,23 +964,34 @@ const AiGeneration = () => {
             }
         } catch (e) { console.error(e); }
 
-        const loadTiles = (type) => {
-            const stored = JSON.parse(localStorage.getItem(type)) || [];
-            return stored.length > 0 ? stored : [];
+        const loadServerTiles = async () => {
+            try {
+                const response = await fetch('http://localhost:5000/api/products');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.length > 0) {
+                        setAvailableTiles(data);
+                    } else {
+                        // Fallback if empty
+                        setAvailableTiles([
+                            { image: 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&w=200&q=80', design: 'Marble White', size: '2x2', amount: 120, type: 'floor' },
+                            { image: 'https://images.unsplash.com/photo-1517482439563-71887e0b5722?auto=format&fit=crop&w=200&q=80', design: 'Granite Grey', size: '2x2', amount: 140, type: 'floor' },
+                            { image: 'https://images.unsplash.com/photo-1616486338812-3dadae4b4f9d?auto=format&fit=crop&w=200&q=80', design: 'Wood Finish', size: '4x1', amount: 180, type: 'wall' },
+                        ]);
+                    }
+                }
+            } catch (error) {
+                console.error("Error loading tiles:", error);
+                // Load fallback
+                setAvailableTiles([
+                    { image: 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&w=200&q=80', design: 'Marble White', size: '2x2', amount: 120, type: 'floor' },
+                    { image: 'https://images.unsplash.com/photo-1517482439563-71887e0b5722?auto=format&fit=crop&w=200&q=80', design: 'Granite Grey', size: '2x2', amount: 140, type: 'floor' },
+                    { image: 'https://images.unsplash.com/photo-1616486338812-3dadae4b4f9d?auto=format&fit=crop&w=200&q=80', design: 'Wood Finish', size: '4x1', amount: 180, type: 'wall' },
+                ]);
+            }
         };
-        const localFloor = loadTiles('floor').map(t => ({ ...t, type: 'floor' }));
-        const localWall = loadTiles('wall').map(t => ({ ...t, type: 'wall' }));
-        const allLocal = [...localFloor, ...localWall];
 
-        if (allLocal.length > 0) {
-            setAvailableTiles(allLocal);
-        } else {
-            setAvailableTiles([
-                { image: 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&w=200&q=80', design: 'Marble White', size: '2x2', amount: 120, type: 'floor' },
-                { image: 'https://images.unsplash.com/photo-1517482439563-71887e0b5722?auto=format&fit=crop&w=200&q=80', design: 'Granite Grey', size: '2x2', amount: 140, type: 'floor' },
-                { image: 'https://images.unsplash.com/photo-1616486338812-3dadae4b4f9d?auto=format&fit=crop&w=200&q=80', design: 'Wood Finish', size: '4x1', amount: 180, type: 'wall' },
-            ]);
-        }
+        loadServerTiles();
     }, []);
 
     const handleDimensionChange = (e, dim) => {
@@ -1250,6 +1261,46 @@ const AiGeneration = () => {
                                 <div className="param"><strong>Length</strong><div>{setup.length} ft</div></div>
                                 <div className="param"><strong>Total Area</strong><div>{setup.area.toFixed(2)} sq ft</div></div>
                                 <div className="param"><strong>Room Model</strong><div>{setup.model}</div></div>
+                                <div className="param" style={{ alignItems: 'flex-start' }}>
+                                    <strong>Cost Estimation</strong>
+                                    <div style={{ textAlign: 'right' }}>
+                                        <div style={{ fontSize: '1.2em', fontWeight: 'bold' }}>
+                                            ₹{(() => {
+                                                let total = 0;
+                                                if (floorTile && floorTile.amount) total += setup.area * (Number(floorTile.amount) || 0);
+
+                                                const h = setup.height;
+                                                const w = setup.width;
+                                                const l = setup.length;
+                                                const fbArea = w * h;
+                                                const sArea = l * h;
+
+                                                if (walls.front && walls.front.amount) total += fbArea * (Number(walls.front.amount) || 0);
+                                                if (walls.back && walls.back.amount) total += fbArea * (Number(walls.back.amount) || 0);
+                                                if (walls.left && walls.left.amount) total += sArea * (Number(walls.left.amount) || 0);
+                                                if (walls.right && walls.right.amount) total += sArea * (Number(walls.right.amount) || 0);
+                                                return total.toFixed(2);
+                                            })()}
+                                        </div>
+                                        <div style={{ fontSize: '0.8em', color: '#666', marginTop: '5px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                                            {floorTile && (
+                                                <div title="Floor Tile">Floor: {floorTile.size} • ₹{floorTile.amount}/sq.ft</div>
+                                            )}
+                                            {walls.front && (
+                                                <div title="Front Wall">Front: {walls.front.size} • ₹{walls.front.amount}/sq.ft</div>
+                                            )}
+                                            {walls.back && (
+                                                <div title="Back Wall">Back: {walls.back.size} • ₹{walls.back.amount}/sq.ft</div>
+                                            )}
+                                            {walls.left && (
+                                                <div title="Left Wall">Left: {walls.left.size} • ₹{walls.left.amount}/sq.ft</div>
+                                            )}
+                                            {walls.right && (
+                                                <div title="Right Wall">Right: {walls.right.size} • ₹{walls.right.amount}/sq.ft</div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <div className="dimension-controls">
                                     <h4>Adjust Room Dimensions</h4>

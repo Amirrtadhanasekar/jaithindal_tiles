@@ -11,10 +11,12 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/jai-thindal-tiles';
 const DATA_FILE = path.join(process.cwd(), 'server', 'customers.json');
+const PRODUCTS_FILE = path.join(process.cwd(), 'server', 'products.json');
 
 // Middleware
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // State to track storage mode
 let useMongoDB = false;
@@ -68,8 +70,20 @@ const customerSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now }
 });
 
-const Customer = mongoose.model('Customer', customerSchema);
+const productSchema = new mongoose.Schema({
+    id: { type: Number, required: true }, // Using timestamp as ID from frontend or generated
+    type: { type: String, required: true, enum: ['floor', 'wall'] },
+    image: { type: String }, // Base64 string usually
+    size: { type: String },
+    design: { type: String },
+    amount: { type: Number },
+    createdAt: { type: Date, default: Date.now }
+});
 
+const Customer = mongoose.model('Customer', customerSchema, 'customers');
+const Product = mongoose.model('Product', productSchema, 'products');
+
+// Helper to read local file
 // Helper to read local file
 async function readLocalCustomers() {
     try {
@@ -77,6 +91,15 @@ async function readLocalCustomers() {
         return JSON.parse(data);
     } catch (error) {
         // If file doesn't exist or is empty, return empty array
+        return [];
+    }
+}
+
+async function readLocalProducts() {
+    try {
+        const data = await fs.readFile(PRODUCTS_FILE, 'utf-8');
+        return JSON.parse(data);
+    } catch (error) {
         return [];
     }
 }
@@ -143,6 +166,89 @@ app.post('/api/customers', async (req, res) => {
     } catch (error) {
         console.error('Error saving customer:', error);
         res.status(500).json({ error: 'Failed to save customer' });
+    }
+});
+
+// --- PRODUCT ROUTES ---
+
+// GET all products
+app.get('/api/products', async (req, res) => {
+    try {
+        if (useMongoDB) {
+            const products = await Product.find().sort({ createdAt: -1 });
+            return res.json(products);
+        } else {
+            const products = await readLocalProducts();
+            return res.json(products);
+        }
+    } catch (error) {
+        console.error('Fetch products error:', error);
+        res.status(500).json({ error: 'Failed to fetch products' });
+    }
+});
+
+// POST new product
+app.post('/api/products', async (req, res) => {
+    try {
+        const { id, type, image, size, design, amount } = req.body;
+
+        if (!type || !design || !amount) {
+            return res.status(400).json({ error: 'Type, Design and Amount are required' });
+        }
+
+        const newProductData = {
+            id: id || Date.now(),
+            type,
+            image, // Include the image (Base64 string)
+            size,
+            design,
+            amount,
+            createdAt: new Date()
+        };
+
+        if (useMongoDB) {
+            const newProduct = new Product(newProductData);
+            const savedProduct = await newProduct.save();
+            return res.status(201).json({ message: 'Product saved', product: savedProduct });
+        } else {
+            const products = await readLocalProducts();
+            products.push(newProductData);
+            await fs.writeFile(PRODUCTS_FILE, JSON.stringify(products, null, 2));
+            return res.status(201).json({ message: 'Product saved', product: newProductData });
+        }
+    } catch (error) {
+        console.error('Save product error:', error);
+        res.status(500).json({ error: 'Failed to save product' });
+    }
+});
+
+// DELETE product
+app.delete('/api/products/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const numId = parseInt(id); // IDs are timestamps usually numbers
+
+        if (useMongoDB) {
+            // MongoDB might use its own _id but we are storing a custom numerical 'id' field too.
+            // Let's assume we delete by the custom id field since frontend uses it.
+            await Product.findOneAndDelete({ id: numId });
+            return res.json({ message: 'Product deleted' });
+        } else {
+            let products = await readLocalProducts();
+            const initialLength = products.length;
+            products = products.filter(p => p.id !== numId);
+
+            if (products.length === initialLength && !isNaN(numId)) {
+                // Try string comparison if number failed (though JSON parses numbers)
+                products = products.filter(p => p.id != id);
+            }
+
+            await fs.writeFile(PRODUCTS_FILE, JSON.stringify(products, null, 2));
+            return res.json({ message: 'Product deleted' });
+        }
+    } catch (error) {
+        console.error('Delete product error:', error);
+        res.status(500).json({ error: 'Failed to delete product' });
     }
 });
 
